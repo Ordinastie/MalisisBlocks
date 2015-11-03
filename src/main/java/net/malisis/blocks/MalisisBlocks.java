@@ -97,12 +97,7 @@ public class MalisisBlocks implements IMalisisMod
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
-	{
-		if (MalisisCore.isClient())
-		{
-
-		}
-	}
+	{}
 
 	public static class Blocks
 	{

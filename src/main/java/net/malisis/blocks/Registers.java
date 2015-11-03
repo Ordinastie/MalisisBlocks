@@ -27,6 +27,7 @@ package net.malisis.blocks;
 import static net.malisis.blocks.MalisisBlocks.Blocks.*;
 import net.malisis.blocks.block.BlockMixer;
 import net.malisis.blocks.block.MixedBlock;
+import net.malisis.blocks.block.PlayerSensor;
 import net.malisis.blocks.block.VanishingBlock;
 import net.malisis.blocks.block.VanishingDiamondBlock;
 import net.malisis.blocks.tileentity.BlockMixerTileEntity;
@@ -37,6 +38,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class Registers
 {
@@ -45,6 +47,8 @@ public class Registers
 		registerVanishingBlock();
 
 		registerMixedBlock();
+
+		registerPlayerSensor();
 	}
 
 	private static void registerVanishingBlock()
@@ -81,5 +85,15 @@ public class Registers
 
 		GameRegistry.registerTileEntity(BlockMixerTileEntity.class, "blockMixerTileEntity");
 		GameRegistry.registerTileEntity(MixedBlockTileEntity.class, "mixedBlockTileEntity");
+	}
+
+	private static void registerPlayerSensor()
+	{
+		playerSensor = new PlayerSensor();
+		playerSensor.register();
+
+		// Sensor recipe
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(playerSensor), "ABA", "CCC", 'A', Items.iron_ingot, 'B', Items.redstone,
+				'C', "blockGlassColorless"));
 	}
 }

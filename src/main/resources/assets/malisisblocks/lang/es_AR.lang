@@ -1,0 +1,27 @@
+itemGroup.malisisblocks=MalisisBlocks
+
+tile.player_sensor.name=Detector de Jugador
+tile.vanishing_block_wood.name=Marco Fantasma de Madera
+tile.vanishing_block_iron.name=Marco Fantasma de Hierro
+tile.vanishing_block_gold.name=Marco Fantasma de Oro
+tile.vanishing_block_diamond.name=Marco Fantasma de Diamante
+tile.block_mixer.name=Mezclador de Bloques
+tile.mixed_block.name=Bloque Mixto
+
+
+config.simpleMixedBlockRendering=Renderizado de Bloques Mixtos Simple.
+config.simpleMixedBlockRendering.comment1=Permite un renderizado de Bloques Mixtos menos detallado.
+config.simpleMixedBlockRendering.comment2=Habilita esta opción si experimentas problemas de z-fighting o glitchs en el renderizado.
+
+config.enableVanishingGlitch=Permitir animación tipo "glitch" de marcos fantasma.
+config.enableVanishingGlitch.comment=Aleatoriamente los marcos se desestabilizan y se desplazan fuera de esta dimensión.
+
+config.vanishingGlitchChance=Frecuencia de la animación de los marcos fantasma.
+config.vanishingGlitchChance.comment=Qué tan frecuente es la inestabilidad de los marcos fantasma.
+
+config.enhancedMixedBlockPlacement=Usar colocación mejorada de los bloques mixtos.
+config.enhancedMixedBlockPlacement.comment1=Permite colocar la base del bloque donde miras en vez de la cara en la que lo estás colocando.
+config.enhancedMixedBlockPlacement.comment2=Usa shift para invertir la colocación de bloques.
+
+gui.block_mixer.simple_rendering=Renderizado Simple
+gui.block_mixer.simple_rendering_tooltip=En el mundo, los bloques requieren actualización de los chunks para que se muestren los cambios.

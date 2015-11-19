@@ -39,7 +39,6 @@ import net.malisis.core.renderer.element.MergedVertex;
 import net.malisis.core.renderer.element.Shape;
 import net.malisis.core.renderer.element.shape.Cube;
 import net.malisis.core.renderer.icon.VanillaIcon;
-import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -98,7 +97,9 @@ public class MixedBlockRenderer extends MalisisRenderer
 		}
 		else if (renderType == RenderType.BLOCK)
 		{
-			tileEntity = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos);
+			tileEntity = (MixedBlockTileEntity) super.tileEntity;
+			if (tileEntity == null)
+				return false;
 			state1 = tileEntity.getState1();
 			state2 = tileEntity.getState2();
 

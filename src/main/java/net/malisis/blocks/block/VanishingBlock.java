@@ -374,6 +374,12 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
+	public boolean isFullCube()
+	{
+		return false;
+	}
+
+	@Override
 	public float getAmbientOcclusionLightValue()
 	{
 		return 0.9F;

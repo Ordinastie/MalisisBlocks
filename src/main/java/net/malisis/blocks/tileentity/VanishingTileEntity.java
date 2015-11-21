@@ -52,7 +52,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class VanishingTileEntity extends TileEntity implements IUpdatePlayerListBox
 {
-	public final static int maxTransitionTime = 8;
+	public final static int maxTransitionTime = 60;
 	public final static int maxVibratingTime = 15;
 
 	protected IBlockState copiedState;
@@ -168,7 +168,7 @@ public class VanishingTileEntity extends TileEntity implements IUpdatePlayerList
 			return false;
 
 		if (!inTransition)
-			this.transitionTimer = powered ? 0 : duration;
+			this.transitionTimer = powered ? 0 : getDuration();
 		this.powered = powered;
 		this.inTransition = true;
 		//will probably break
@@ -211,7 +211,7 @@ public class VanishingTileEntity extends TileEntity implements IUpdatePlayerList
 			if (powered) // powering => going invisible
 			{
 				transitionTimer++;
-				if (transitionTimer >= duration)
+				if (transitionTimer >= getDuration())
 				{
 					inTransition = false;
 					worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 0.0F,
@@ -275,7 +275,7 @@ public class VanishingTileEntity extends TileEntity implements IUpdatePlayerList
 		}
 		nbt.setInteger("FrameType", frameType.ordinal());
 		nbt.setBoolean("Powered", powered);
-		nbt.setInteger("Duration", duration);
+		nbt.setInteger("Duration", getDuration());
 		nbt.setBoolean("InTransition", inTransition);
 		nbt.setInteger("TransitionTimer", transitionTimer);
 		nbt.setBoolean("Vibrating", vibrating);

@@ -25,3 +25,5 @@ config.enhancedMixedBlockPlacement.comment2=Use sneak key to inverse the block p
 
 gui.block_mixer.simple_rendering=Simple rendering
 gui.block_mixer.simple_rendering_tooltip=In world blocks require chunk update to take effect.
+
+gui.vanishingoptions.title=Vanishing Options

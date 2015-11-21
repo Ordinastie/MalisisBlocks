@@ -22,17 +22,16 @@
  * THE SOFTWARE.
  */
 
-package net.malisis.blocks.gui;
+package net.malisis.blocks.vanishingoption;
 
 import java.util.HashMap;
 
 import net.malisis.blocks.network.VanishingDiamondFrameMessage;
 import net.malisis.blocks.network.VanishingDiamondFrameMessage.DataType;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
-import net.malisis.blocks.tileentity.VanishingDiamondTileEntity.DirectionState;
+import net.malisis.blocks.vanishingoption.VanishingOptions.DirectionState;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.MalisisGui;
-import net.malisis.core.client.gui.component.UIComponent;
 import net.malisis.core.client.gui.component.container.UIContainer;
 import net.malisis.core.client.gui.component.container.UIInventory;
 import net.malisis.core.client.gui.component.container.UIPlayerInventory;
@@ -47,6 +46,7 @@ import net.minecraft.util.EnumFacing;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -54,24 +54,31 @@ import com.google.common.eventbus.Subscribe;
  * @author Ordinastie
  *
  */
-public class VanishingDiamondGui extends MalisisGui
+public class VanishingOptionsGui extends MalisisGui
 {
 	protected VanishingDiamondTileEntity tileEntity;
+	protected VanishingOptions vanishingOptions;
 
 	protected UITextField duration;
-	protected HashMap<EnumFacing, UIComponent[]> configs = new HashMap<>();
+	protected HashMap<EnumFacing, Triple<UICheckBox, UITextField, UICheckBox>> configs = new HashMap<>();
 
-	public VanishingDiamondGui(VanishingDiamondTileEntity te, MalisisInventoryContainer container)
+	public VanishingOptionsGui(VanishingOptions vanishingOptions, MalisisInventoryContainer container)
 	{
 		setInventoryContainer(container);
-		this.tileEntity = te;
+		this.vanishingOptions = vanishingOptions;
+	}
+
+	public VanishingOptionsGui(VanishingOptions vanishingOptions, MalisisInventoryContainer container, VanishingDiamondTileEntity tileEntity)
+	{
+		this(vanishingOptions, container);
+		this.tileEntity = tileEntity;
 	}
 
 	@Override
 	public void construct()
 	{
 
-		UIWindow window = new UIWindow(this, "tile.vanishing_block_diamond.name", 200, 220);
+		UIWindow window = new UIWindow(this, "gui.vanishingoptions.title", 200, 220);
 
 		window.add(new UILabel(this, "Direction").setPosition(0, 20));
 		window.add(new UILabel(this, "Delay").setPosition(55, 20));
@@ -80,7 +87,7 @@ public class VanishingDiamondGui extends MalisisGui
 		int i = 0;
 		for (EnumFacing dir : EnumFacing.VALUES)
 		{
-			DirectionState state = tileEntity.getDirectionState(dir);
+			DirectionState state = vanishingOptions.getDirectionState(dir);
 			int y = i * 14 + 30;
 			UICheckBox cb = new UICheckBox(this, dir.name());
 			cb.setPosition(2, y).setChecked(state.shouldPropagate).register(this);
@@ -98,14 +105,15 @@ public class VanishingDiamondGui extends MalisisGui
 			window.add(textField);
 			window.add(invCb);
 
-			configs.put(dir, new UIComponent[] { cb, textField, invCb });
+			configs.put(dir, Triple.of(cb, textField, invCb));
 
 			i++;
 		}
 
 		UIContainer cont = new UIContainer<UIContainer>(this, 50, 60).setPosition(0, 40, Anchor.RIGHT);
 
-		duration = new UITextField(this, null).setSize(30, 0).setPosition(0, 10, Anchor.CENTER).register(this);
+		duration = new UITextField(this, "" + vanishingOptions.getDuration()).setSize(30, 0).setPosition(0, 10, Anchor.CENTER)
+				.register(this);
 		duration.attachData(Pair.of(null, DataType.DURATION));
 		cont.add(new UILabel(this, "Duration").setPosition(0, 0, Anchor.CENTER));
 		cont.add(duration);
@@ -122,7 +130,8 @@ public class VanishingDiamondGui extends MalisisGui
 
 		addToScreen(window);
 
-		TileEntityUtils.linkTileEntityToGui(tileEntity, this);
+		if (tileEntity != null)
+			TileEntityUtils.linkTileEntityToGui(tileEntity, this);
 	}
 
 	@Subscribe
@@ -131,24 +140,36 @@ public class VanishingDiamondGui extends MalisisGui
 		Pair<EnumFacing, DataType> data = (Pair<EnumFacing, DataType>) event.getComponent().getData();
 		int time = event.getComponent() instanceof UITextField ? NumberUtils.toInt((String) event.getNewValue()) : 0;
 		boolean checked = event.getComponent() instanceof UICheckBox ? (boolean) event.getNewValue() : false;
+
+		vanishingOptions.set(data.getLeft(), data.getRight(), time, checked);
+
 		VanishingDiamondFrameMessage.sendConfiguration(tileEntity, data.getLeft(), data.getRight(), time, checked);
+
+		updateGui();
 	}
 
 	@Override
 	public void updateGui()
 	{
 		if (!duration.isFocused())
-			duration.setText("" + tileEntity.getDuration());
+			duration.setText("" + vanishingOptions.getDuration());
+
 		for (EnumFacing dir : EnumFacing.VALUES)
 		{
-			DirectionState state = tileEntity.getDirectionState(dir);
-			((UICheckBox) configs.get(dir)[0]).setChecked(state.shouldPropagate);
-			UITextField tf = (UITextField) configs.get(dir)[1];
+			DirectionState state = vanishingOptions.getDirectionState(dir);
+			UICheckBox cb = configs.get(dir).getLeft();
+			UITextField tf = configs.get(dir).getMiddle();
+			UICheckBox inv = configs.get(dir).getRight();
+
 			tf.setDisabled(!state.shouldPropagate);
+			inv.setDisabled(!state.shouldPropagate);
+
+			if (!cb.isFocused())
+				cb.setChecked(state.shouldPropagate);
 			if (!tf.isFocused())
 				tf.setText("" + state.delay);
-			((UICheckBox) configs.get(dir)[2]).setDisabled(!state.shouldPropagate).setChecked(state.inversed);
+			if (!inv.isFocused())
+				inv.setChecked(state.inversed);
 		}
 	}
-
 }

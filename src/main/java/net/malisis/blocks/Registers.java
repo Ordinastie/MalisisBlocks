@@ -25,11 +25,13 @@
 package net.malisis.blocks;
 
 import static net.malisis.blocks.MalisisBlocks.Blocks.*;
+import static net.malisis.blocks.MalisisBlocks.Items.*;
 import net.malisis.blocks.block.BlockMixer;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.block.PlayerSensor;
 import net.malisis.blocks.block.VanishingBlock;
 import net.malisis.blocks.block.VanishingDiamondBlock;
+import net.malisis.blocks.item.VanishingCopierItem;
 import net.malisis.blocks.tileentity.BlockMixerTileEntity;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
@@ -71,6 +73,8 @@ public class Registers
 		GameRegistry.registerTileEntity(VanishingTileEntity.class, "vanishingTileEntity");
 		GameRegistry.registerTileEntity(VanishingDiamondTileEntity.class, "vanishingDiamondTileEntity");
 
+		vanishingCopierItem = new VanishingCopierItem();
+		vanishingCopierItem.register();
 	}
 
 	private static void registerMixedBlock()

@@ -66,6 +66,7 @@ public class VanishingBlockRenderer extends MalisisRenderer
 	public void render()
 	{
 		cube.resetState();
+		tileEntity = (VanishingTileEntity) super.tileEntity;
 		if (renderType == RenderType.TILE_ENTITY)
 			renderVanishingTileEntity();
 		else if (renderType == RenderType.ITEM)
@@ -76,38 +77,45 @@ public class VanishingBlockRenderer extends MalisisRenderer
 		}
 		else if (renderType == RenderType.BLOCK)
 		{
-			tileEntity = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
-			if (tileEntity.isPowered() || tileEntity.isInTransition() || tileEntity.isVibrating())
-				return;
+			renderVanishingBlock();
+		}
+	}
 
-			tileEntity.blockDrawn = true;
-			if (tileEntity.getCopiedState() == null)
-			{
-				if (getRenderLayer() == EnumWorldBlockLayer.CUTOUT_MIPPED)
-					drawShape(cube);
-				return;
-			}
+	private void renderVanishingBlock()
+	{
+		if (tileEntity.isPowered() || tileEntity.isInTransition() || tileEntity.isVibrating())
+		{
+			return;
+		}
 
-			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			wr.setVertexFormat(DefaultVertexFormats.BLOCK);
-			try
+		tileEntity.blockDrawn = true;
+
+		if (tileEntity.getCopiedState() == null)
+		{
+			if (getRenderLayer() == EnumWorldBlockLayer.CUTOUT_MIPPED)
+				drawShape(cube);
+			return;
+		}
+
+		BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		wr.setVertexFormat(DefaultVertexFormats.BLOCK);
+		try
+		{
+			if (tileEntity.getCopiedState().getBlock().canRenderInLayer(getRenderLayer()))
 			{
-				if (tileEntity.getCopiedState().getBlock().canRenderInLayer(getRenderLayer()))
+				if (tileEntity.getCopiedState().getBlock().getRenderType() == MalisisCore.malisisRenderType)
+					blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), wr);
+				else
 				{
-					if (tileEntity.getCopiedState().getBlock().getRenderType() == MalisisCore.malisisRenderType)
-						blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), wr);
-					else
-					{
-						IBakedModel model = blockRenderer.getModelFromBlockState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
-						vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
-								tileEntity.getCopiedState(), pos, wr, false);
-					}
+					IBakedModel model = blockRenderer.getModelFromBlockState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
+					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
+							tileEntity.getCopiedState(), pos, wr, false);
 				}
 			}
-			catch (Exception e)
-			{
-				drawShape(cube);
-			}
+		}
+		catch (Exception e)
+		{
+			drawShape(cube);
 		}
 	}
 
@@ -158,6 +166,8 @@ public class VanishingBlockRenderer extends MalisisRenderer
 			rp.alpha.set(alpha);
 			cube.scale(scale - 0.001F);
 		}
+		else if (tileEntity.blockDrawn)
+			return;
 
 		if (tileEntity.getCopiedState() != null)
 		{

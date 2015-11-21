@@ -26,13 +26,16 @@ package net.malisis.blocks.network;
 
 import io.netty.buffer.ByteBuf;
 import net.malisis.blocks.MalisisBlocks;
+import net.malisis.blocks.MalisisBlocks.Items;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
+import net.malisis.blocks.vanishingoption.VanishingOptions;
 import net.malisis.core.network.IMalisisMessageHandler;
 import net.malisis.core.network.MalisisMessage;
+import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,37 +60,54 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 	@Override
 	public void process(Packet message, MessageContext ctx)
 	{
-		World world = ctx.getServerHandler().playerEntity.worldObj;
-		VanishingDiamondTileEntity te = TileEntityUtils.getTileEntity(VanishingDiamondTileEntity.class, world, message.pos);
-		if (te == null)
+		VanishingOptions vanishingOptions = null;
+		EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+		if (message.isTileEntity)
+		{
+
+			VanishingDiamondTileEntity te = TileEntityUtils.getTileEntity(VanishingDiamondTileEntity.class, player.worldObj, message.pos);
+			if (te == null)
+				return;
+			vanishingOptions = te.getVanishingOptions();
+		}
+		else
+		{
+			if (!EntityUtils.isEquipped(player, Items.vanishingCopierItem))
+				return;
+
+			vanishingOptions = Items.vanishingCopierItem.getVanishingOptions(player.getCurrentEquippedItem());
+		}
+
+		if (vanishingOptions == null)
 			return;
 
-		switch (message.type)
-		{
-			case PROPAGATION:
-				te.getDirectionState(message.facing).shouldPropagate = message.checked;
-				break;
-			case DELAY:
-				te.getDirectionState(message.facing).delay = message.time;
-				break;
-			case INVERSED:
-				te.getDirectionState(message.facing).inversed = message.checked;
-				break;
-			case DURATION:
-				te.setDuration(message.time);
-				break;
-		}
-		world.markBlockForUpdate(message.pos);
+		vanishingOptions.set(message.facing, message.type, message.time, message.checked);
+
+		if (message.isTileEntity)
+			player.worldObj.markBlockForUpdate(message.pos);
+		else
+			vanishingOptions.save();
 	}
 
 	public static void sendConfiguration(VanishingDiamondTileEntity te, EnumFacing facing, DataType type, int time, boolean checked)
 	{
-		Packet packet = new Packet(te.getPos(), type, facing, time, checked);
+		Packet packet = null;
+		if (te != null)
+			packet = new Packet(te.getPos(), type, facing, time, checked);
+		else
+			packet = new Packet(type, facing, time, checked);
+		MalisisBlocks.network.sendToServer(packet);
+	}
+
+	public static void sendConfiguration(EnumFacing facing, DataType type, int time, boolean checked)
+	{
+		Packet packet = new Packet(type, facing, time, checked);
 		MalisisBlocks.network.sendToServer(packet);
 	}
 
 	public static class Packet implements IMessage
 	{
+		protected boolean isTileEntity;
 		protected BlockPos pos;
 		protected DataType type;
 		protected EnumFacing facing;
@@ -97,19 +117,27 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 		public Packet()
 		{}
 
-		public Packet(BlockPos pos, DataType type, EnumFacing facing, int time, boolean checked)
+		public Packet(DataType type, EnumFacing facing, int time, boolean checked)
 		{
-			this.pos = pos;
 			this.type = type;
 			this.facing = facing;
 			this.time = time;
 			this.checked = checked;
 		}
 
+		public Packet(BlockPos pos, DataType type, EnumFacing facing, int time, boolean checked)
+		{
+			this(type, facing, time, checked);
+			this.pos = pos;
+			this.isTileEntity = true;
+		}
+
 		@Override
 		public void fromBytes(ByteBuf buf)
 		{
-			pos = BlockPos.fromLong(buf.readLong());
+			isTileEntity = buf.readBoolean();
+			if (isTileEntity)
+				pos = BlockPos.fromLong(buf.readLong());
 			type = DataType.values()[buf.readByte()];
 			if (type != DataType.DURATION)
 				facing = EnumFacing.values()[buf.readByte()];
@@ -122,7 +150,9 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 		@Override
 		public void toBytes(ByteBuf buf)
 		{
-			buf.writeLong(pos.toLong());
+			buf.writeBoolean(isTileEntity);
+			if (isTileEntity)
+				buf.writeLong(pos.toLong());
 			buf.writeByte(type.ordinal());
 			if (type != DataType.DURATION)
 				buf.writeByte(facing.ordinal());

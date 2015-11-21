@@ -3,7 +3,7 @@ package net.malisis.blocks.tileentity;
 import net.malisis.blocks.gui.BlockMixerGui;
 import net.malisis.blocks.item.MixedBlockBlockItem;
 import net.malisis.core.client.gui.MalisisGui;
-import net.malisis.core.inventory.IInventoryProvider;
+import net.malisis.core.inventory.IInventoryProvider.IDirectInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.inventory.MalisisInventoryContainer;
 import net.malisis.core.inventory.MalisisSlot;
@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockMixerTileEntity extends TileEntity implements IInventoryProvider, IUpdatePlayerListBox
+public class BlockMixerTileEntity extends TileEntity implements IDirectInventoryProvider, IUpdatePlayerListBox
 {
 	private MalisisInventory inventory;
 	private int mixTimer = 0;
@@ -33,7 +33,7 @@ public class BlockMixerTileEntity extends TileEntity implements IInventoryProvid
 	}
 
 	@Override
-	public MalisisInventory getInventory(Object... data)
+	public MalisisInventory getInventory()
 	{
 		return inventory;
 	}

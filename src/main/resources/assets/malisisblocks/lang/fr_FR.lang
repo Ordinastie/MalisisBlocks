@@ -25,3 +25,5 @@ config.enhancedMixedBlockPlacement.comment2=Utiliser la touche "S'accroupir" pou
 
 gui.block_mixer.simple_rendering=Rendu simplifié
 gui.block_mixer.simple_rendering_tooltip=Nécessite une mise à jour de tronçons pour les blocs du monde
+
+gui.vanishingoptions.title=Vanishing Options

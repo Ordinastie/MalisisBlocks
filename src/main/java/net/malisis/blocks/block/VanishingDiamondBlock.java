@@ -26,10 +26,11 @@ package net.malisis.blocks.block;
 
 import java.util.List;
 
+import net.malisis.blocks.MalisisBlocks.Items;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
-import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
+import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -70,8 +71,18 @@ public class VanishingDiamondBlock extends VanishingBlock
 		if (world.isRemote)
 			return true;
 
-		IInventoryProvider te = TileEntityUtils.getTileEntity(IInventoryProvider.class, world, pos);
-		MalisisInventory.open((EntityPlayerMP) player, te);
+		VanishingDiamondTileEntity te = TileEntityUtils.getTileEntity(VanishingDiamondTileEntity.class, world, pos);
+
+		if (!EntityUtils.isEquipped(player, Items.vanishingCopierItem))
+		{
+			MalisisInventory.open((EntityPlayerMP) player, te);
+			return true;
+		}
+
+		if (player.isSneaking())
+			te.copyOptions(player.getCurrentEquippedItem());
+		else
+			te.pasteOptions(player.getCurrentEquippedItem());
 
 		return true;
 	}

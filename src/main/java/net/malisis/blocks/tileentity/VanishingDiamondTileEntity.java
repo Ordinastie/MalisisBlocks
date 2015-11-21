@@ -24,25 +24,22 @@
 
 package net.malisis.blocks.tileentity;
 
-import java.util.HashMap;
-
+import net.malisis.blocks.MalisisBlocks.Items;
 import net.malisis.blocks.block.VanishingBlock;
-import net.malisis.blocks.gui.VanishingDiamondGui;
+import net.malisis.blocks.vanishingoption.VanishingOptions;
+import net.malisis.blocks.vanishingoption.VanishingOptionsGui;
 import net.malisis.core.client.gui.MalisisGui;
-import net.malisis.core.inventory.IInventoryProvider;
+import net.malisis.core.inventory.IInventoryProvider.IDirectInventoryProvider;
 import net.malisis.core.inventory.InventoryEvent;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.inventory.MalisisInventoryContainer;
-import net.malisis.core.inventory.MalisisSlot;
 import net.malisis.core.util.TileEntityUtils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,28 +49,64 @@ import com.google.common.eventbus.Subscribe;
  * @author Ordinastie
  *
  */
-public class VanishingDiamondTileEntity extends VanishingTileEntity implements IInventoryProvider, IUpdatePlayerListBox
+public class VanishingDiamondTileEntity extends VanishingTileEntity implements IDirectInventoryProvider, IUpdatePlayerListBox
 {
-	protected MalisisInventory inventory;
-	protected MalisisSlot slot;
 	protected int changedPowerStateTimer;
-	protected HashMap<EnumFacing, DirectionState> directionStates = new HashMap<>();
+	protected VanishingOptions vanishingOptions = new VanishingOptions();
 
 	public VanishingDiamondTileEntity()
 	{
 		super(VanishingBlock.Type.DIAMOND);
-		inventory = new MalisisInventory(this, 1);
-		inventory.setInventoryStackLimit(1);
+		vanishingOptions.getSlot().register(this);
+	}
 
-		slot = inventory.getSlot(0);
-		slot.register(this);
-		for (EnumFacing dir : EnumFacing.VALUES)
-			directionStates.put(dir, new DirectionState(dir));
+	public VanishingOptions getVanishingOptions()
+	{
+		return vanishingOptions;
 	}
 
 	public void setDuration(int duration)
 	{
-		this.duration = duration;
+		vanishingOptions.setDuration(duration);
+	}
+
+	@Override
+	public int getDuration()
+	{
+		return vanishingOptions.getDuration();
+	}
+
+	public void copyOptions(ItemStack itemStack)
+	{
+		if (itemStack == null || itemStack.getItem() != Items.vanishingCopierItem)
+			return;
+
+		VanishingOptions isOptions = Items.vanishingCopierItem.getVanishingOptions(itemStack);
+		isOptions.copy(vanishingOptions);
+
+		if (!vanishingOptions.getSlot().isEmpty() && !isOptions.getSlot().isFull())
+		{
+			isOptions.getInventory().transfer(vanishingOptions.getInventory());
+		}
+
+		isOptions.save();
+	}
+
+	public void pasteOptions(ItemStack itemStack)
+	{
+		if (itemStack == null || itemStack.getItem() != Items.vanishingCopierItem)
+			return;
+
+		VanishingOptions isOptions = Items.vanishingCopierItem.getVanishingOptions(itemStack);
+		vanishingOptions.copy(isOptions);
+
+		if (!vanishingOptions.getSlot().isFull())
+		{
+			ItemStack is = isOptions.getSlot().extract(1);
+			vanishingOptions.getSlot().insert(is);
+		}
+
+		worldObj.markBlockForUpdate(pos);
 	}
 
 	@Override
@@ -83,41 +116,28 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 			return false;
 
 		changedPowerStateTimer = 0;
-		for (EnumFacing dir : EnumFacing.VALUES)
-		{
-			directionStates.get(dir).resetPropagationState();
-			directionStates.get(dir).propagateState(changedPowerStateTimer);
-		}
-
+		vanishingOptions.setPowerState(worldObj, pos, changedPowerStateTimer, powered);
 		return true;
 	}
 
-	public DirectionState getDirectionState(EnumFacing dir)
-	{
-		return directionStates.get(dir);
-	}
-
 	@Override
-	public MalisisInventory getInventory(Object... data)
+	public MalisisInventory getInventory()
 	{
-		return inventory;
+		return vanishingOptions.getInventory();
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public MalisisGui getGui(MalisisInventoryContainer container)
 	{
-		return new VanishingDiamondGui(this, container);
+		return new VanishingOptionsGui(vanishingOptions, container, this);
 	}
 
 	@Override
 	public void update()
 	{
 		changedPowerStateTimer++;
-
-		for (EnumFacing dir : EnumFacing.VALUES)
-			directionStates.get(dir).propagateState(changedPowerStateTimer);
-
+		vanishingOptions.propagateState(worldObj, pos, changedPowerStateTimer, powered);
 		super.update();
 	}
 
@@ -132,28 +152,14 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 	public void readFromNBT(NBTTagCompound nbt)
 	{
 		super.readFromNBT(nbt);
-		inventory.readFromNBT(nbt);
-
-		NBTTagList dirList = nbt.getTagList("Directions", NBT.TAG_COMPOUND);
-		for (int i = 0; i < dirList.tagCount(); ++i)
-		{
-			NBTTagCompound tag = dirList.getCompoundTagAt(i);
-			EnumFacing dir = EnumFacing.getFront(tag.getInteger("direction"));
-			directionStates.get(dir).readFromNBT(tag);
-		}
+		vanishingOptions.readFromNBT(nbt);
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt)
 	{
 		super.writeToNBT(nbt);
-		inventory.writeToNBT(nbt);
-
-		NBTTagList dirList = new NBTTagList();
-		for (EnumFacing dir : EnumFacing.VALUES)
-			dirList.appendTag(directionStates.get(dir).writeToNBT(new NBTTagCompound()));
-
-		nbt.setTag("Directions", dirList);
+		vanishingOptions.writeToNBT(nbt);
 	}
 
 	@Override
@@ -161,66 +167,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 	{
 		super.onDataPacket(net, packet);
 		TileEntityUtils.updateGui(this);
-	}
-
-	public class DirectionState
-	{
-		public EnumFacing direction;
-		public boolean shouldPropagate;
-		public int delay;
-		public boolean inversed;
-		public boolean propagated;
-
-		public DirectionState(EnumFacing direction, boolean shouldPropagate, int delay, boolean inversed)
-		{
-			this.direction = direction;
-			update(shouldPropagate, delay, inversed);
-		}
-
-		public DirectionState(EnumFacing direction)
-		{
-			this(direction, false, 0, false);
-		}
-
-		public void update(boolean shouldPropagate, int delay, boolean inversed)
-		{
-			this.shouldPropagate = shouldPropagate;
-			this.delay = delay;
-			this.inversed = inversed;
-		}
-
-		public void resetPropagationState()
-		{
-			this.propagated = false;
-		}
-
-		public boolean propagateState(int timer)
-		{
-			if (!shouldPropagate || propagated || timer < delay)
-				return false;
-
-			IBlockState state = worldObj.getBlockState(pos.offset(direction));
-			if (state.getBlock() instanceof VanishingBlock)
-				((VanishingBlock) state.getBlock()).setPowerState(worldObj, pos.offset(direction), inversed ? !powered : powered);
-			propagated = true;
-
-			return false;
-		}
-
-		public void readFromNBT(NBTTagCompound nbt)
-		{
-			update(nbt.getBoolean("shouldPropagate"), nbt.getInteger("delay"), nbt.getBoolean("inversed"));
-		}
-
-		public NBTTagCompound writeToNBT(NBTTagCompound nbt)
-		{
-			nbt.setInteger("direction", direction.ordinal());
-			nbt.setBoolean("shouldPropagate", shouldPropagate);
-			nbt.setInteger("delay", delay);
-			nbt.setBoolean("inversed", inversed);
-
-			return nbt;
-		}
+		worldObj.markBlockForUpdate(pos);
 	}
 
 }

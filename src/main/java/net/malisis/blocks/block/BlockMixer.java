@@ -28,7 +28,6 @@ import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.tileentity.BlockMixerTileEntity;
 import net.malisis.core.block.IBlockDirectional;
 import net.malisis.core.block.MalisisBlock;
-import net.malisis.core.inventory.IInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.renderer.icon.provider.SidesIconProvider;
 import net.malisis.core.util.TileEntityUtils;
@@ -72,7 +71,7 @@ public class BlockMixer extends MalisisBlock implements ITileEntityProvider, IBl
 		if (player.isSneaking())
 			return false;
 
-		IInventoryProvider te = TileEntityUtils.getTileEntity(IInventoryProvider.class, world, pos);
+		BlockMixerTileEntity te = TileEntityUtils.getTileEntity(BlockMixerTileEntity.class, world, pos);
 		MalisisInventory.open((EntityPlayerMP) player, te);
 		return true;
 	}
@@ -80,7 +79,7 @@ public class BlockMixer extends MalisisBlock implements ITileEntityProvider, IBl
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state)
 	{
-		IInventoryProvider provider = TileEntityUtils.getTileEntity(IInventoryProvider.class, world, pos);
+		BlockMixerTileEntity provider = TileEntityUtils.getTileEntity(BlockMixerTileEntity.class, world, pos);
 		if (provider != null)
 			provider.breakInventories(world, pos);
 		super.breakBlock(world, pos, state);

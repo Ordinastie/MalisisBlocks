@@ -39,6 +39,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -61,6 +62,8 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 
 	public VanishingOptions getVanishingOptions(ItemStack itemStack)
 	{
+		if (itemStack.getTagCompound() == null)
+			itemStack.setTagCompound(new NBTTagCompound());
 		VanishingOptions vanishingOptions = new VanishingOptions(itemStack);
 		vanishingOptions.readFromNBT(itemStack.getTagCompound());
 		vanishingOptions.getSlot().register(this);
@@ -123,6 +126,21 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 	public int getMaxItemUseDuration(ItemStack itemStack)
 	{
 		return 1;
+	}
+
+	@Override
+	public boolean showDurabilityBar(ItemStack stack)
+	{
+		return true;
+	}
+
+	@Override
+	public double getDurabilityForDisplay(ItemStack itemStack)
+	{
+		ItemStack is = getVanishingOptions(itemStack).getSlot().getItemStack();
+		if (is == null)
+			return 1;
+		return 1 - ((double) is.stackSize / is.getMaxStackSize());
 	}
 
 	@Override

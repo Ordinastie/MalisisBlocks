@@ -50,8 +50,14 @@ import net.minecraftforge.client.model.TRSRTransformation;
 @SuppressWarnings("deprecation")
 public class VanishingCopierRenderer extends DefaultRenderer.Item
 {
-	AnimationRenderer ar = new AnimationRenderer();
-	Shape shape;
+
+	private AnimationRenderer ar = new AnimationRenderer();
+	private Shape shape;
+
+	private Matrix4f thirdPerson = new TRSRTransformation(new Vector3f(0.05F, 0.0F, -0.195F),
+			TRSRTransformation.quatFromYXZDegrees(new Vector3f(120, -145, 00)), new Vector3f(0.55F, 0.55F, 0.55F), null).getMatrix();
+	private Matrix4f firstPerson = new TRSRTransformation(new Vector3f(0, 0.280F, 0.14F),
+			TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 0)), new Vector3f(1.7F, 1.7F, 1.7F), null).getMatrix();
 
 	@Override
 	public void initialize()
@@ -65,11 +71,6 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 	@Override
 	public Matrix4f getTransform(TransformType tranformType)
 	{
-		Matrix4f thirdPerson = new TRSRTransformation(new Vector3f(0.05F, 0.0F, -0.195F),
-				TRSRTransformation.quatFromYXZDegrees(new Vector3f(120, -145, 00)), new Vector3f(0.55F, 0.55F, 0.55F), null).getMatrix();
-		Matrix4f firstPerson = new TRSRTransformation(new Vector3f(0, 0.280F, 0.14F), TRSRTransformation.quatFromYXZDegrees(new Vector3f(0,
-				-135, 0)), new Vector3f(1.7F, 1.7F, 1.7F), null).getMatrix();
-
 		if (tranformType == TransformType.FIRST_PERSON)
 			return firstPerson;
 		else if (tranformType == TransformType.THIRD_PERSON)
@@ -81,7 +82,6 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 	@Override
 	public void render()
 	{
-		initialize();
 		super.render();
 
 		//		if (tranformType != TransformType.FIRST_PERSON)

@@ -75,6 +75,10 @@ public class Registers
 
 		vanishingCopierItem = new VanishingCopierItem();
 		vanishingCopierItem.register();
+
+		GameRegistry.addRecipe(new ItemStack(vanishingCopierItem), "A  ", " B ", "  B", 'A', new ItemStack(vanishingBlock, 1, 3), 'B',
+				Items.iron_ingot);
+
 	}
 
 	private static void registerMixedBlock()

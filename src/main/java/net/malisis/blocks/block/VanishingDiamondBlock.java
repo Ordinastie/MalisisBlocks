@@ -37,6 +37,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -53,6 +54,12 @@ public class VanishingDiamondBlock extends VanishingBlock
 		super();
 		setName("vanishing_block_diamond");
 		setDefaultState(blockState.getBaseState().withProperty(TYPE, Type.DIAMOND));
+	}
+
+	@Override
+	public Class<? extends ItemBlock> getItemClass()
+	{
+		return null;
 	}
 
 	@Override
@@ -80,10 +87,9 @@ public class VanishingDiamondBlock extends VanishingBlock
 		}
 
 		if (player.isSneaking())
-			te.copyOptions(player.getCurrentEquippedItem());
+			te.copyOptions(player.getHeldItem());
 		else
-			te.pasteOptions(player.getCurrentEquippedItem());
-
+			te.pasteOptions(player.getHeldItem(), player, side, hitX, hitY, hitZ);
 		return true;
 	}
 

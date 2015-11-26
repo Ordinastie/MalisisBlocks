@@ -30,8 +30,10 @@ import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.ProxyAccess;
 import net.malisis.blocks.block.VanishingBlock;
+import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.ItemUtils;
 import net.malisis.core.util.MBlockState;
+import net.malisis.core.util.Silenced;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,7 +54,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class VanishingTileEntity extends TileEntity implements IUpdatePlayerListBox
 {
-	public final static int maxTransitionTime = 60;
+	public final static int maxTransitionTime = 8;
 	public final static int maxVibratingTime = 15;
 
 	protected IBlockState copiedState;
@@ -129,25 +131,49 @@ public class VanishingTileEntity extends TileEntity implements IUpdatePlayerList
 		this.copiedState = state;
 	}
 
+	public boolean applyItemStack(ItemStack itemStack, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	{
+		ItemStack is = ItemUtils.getItemStackFromState(getCopiedState());
+
+		if (!setBlockState(itemStack, player, side, hitX, hitY, hitZ))
+			return false;
+
+		EntityUtils.spawnEjectedItem(worldObj, pos, is);
+
+		if (itemStack == null)
+			return true;
+
+		if (!player.capabilities.isCreativeMode)
+			itemStack.stackSize--;
+
+		((World) ProxyAccess.get(worldObj)).notifyNeighborsOfStateChange(pos, getCopiedState().getBlock());
+		return true;
+	}
+
 	public boolean setBlockState(ItemStack itemStack, EntityPlayer p, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (itemStack == null)
 		{
 			copiedState = null;
 			copiedTileEntity = null;
+			worldObj.markBlockForUpdate(pos);
 			return true;
 		}
 
 		IBlockState state = ItemUtils.getStateFromItemStack(itemStack);
-		if (ArrayUtils.contains(excludes, state.getBlock()))
+		if (state == null || ArrayUtils.contains(excludes, state.getBlock()))
 			return false;
 
 		World proxy = (World) ProxyAccess.get(getWorld());
 		copiedState = state;
 		initCopiedTileEntity();
-		copiedState = state.getBlock().onBlockPlaced(proxy, pos, side, hitX, hitY, hitZ, itemStack.getMetadata(), p);
-		if (p != null)
-			copiedState.getBlock().onBlockPlacedBy(proxy, pos, copiedState, p, itemStack);
+		Silenced.exec(() -> {
+			copiedState = state.getBlock().onBlockPlaced(proxy, pos, side, hitX, hitY, hitZ, itemStack.getMetadata(), p);
+			if (p != null)
+				copiedState.getBlock().onBlockPlacedBy(proxy, pos, copiedState, p, itemStack);
+		});
+
+		worldObj.markBlockForUpdate(pos);
 		return true;
 	}
 
@@ -159,7 +185,12 @@ public class VanishingTileEntity extends TileEntity implements IUpdatePlayerList
 			copiedTileEntity.setWorldObj((World) ProxyAccess.get(getWorld()));
 			copiedTileEntity.setPos(pos);
 		}
+	}
 
+	public void ejectCopiedState()
+	{
+		ItemStack is = ItemUtils.getItemStackFromState(getCopiedState());
+		EntityUtils.spawnEjectedItem(worldObj, pos, is);
 	}
 
 	public boolean setPowerState(boolean powered)

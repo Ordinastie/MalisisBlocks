@@ -209,22 +209,14 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		ItemStack is = player.getHeldItem();
-		if (is == null)
-			return false;
-
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
-		if (te == null || te.getCopiedState() != null)
+		if (te == null)
 			return false;
 
-		if (!te.setBlockState(is, player, side, hitX, hitY, hitZ))
-			return false;
-
-		if (!player.capabilities.isCreativeMode)
-			is.stackSize--;
-
-		world.markBlockForUpdate(pos);
-		((World) ProxyAccess.get(world)).notifyNeighborsOfStateChange(pos, te.getCopiedState().getBlock());
+		if (player.isSneaking())
+			te.applyItemStack(null, player, side, hitX, hitY, hitZ);
+		else if (te.getCopiedState() == null)
+			te.applyItemStack(player.getHeldItem(), player, side, hitX, hitY, hitZ);
 		return true;
 	}
 
@@ -254,7 +246,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (te != null && te.getCopiedState() != null)
-			te.getCopiedState().getBlock().dropBlockAsItem(world, pos, te.getCopiedState(), 0);
+			te.ejectCopiedState();
 
 		world.removeTileEntity(pos);
 	}

@@ -33,7 +33,9 @@ import net.malisis.core.inventory.IInventoryProvider.IDirectInventoryProvider;
 import net.malisis.core.inventory.InventoryEvent;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.inventory.MalisisInventoryContainer;
+import net.malisis.core.util.ItemUtils;
 import net.malisis.core.util.TileEntityUtils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -92,7 +94,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 		isOptions.save();
 	}
 
-	public void pasteOptions(ItemStack itemStack)
+	public void pasteOptions(ItemStack itemStack, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (itemStack == null || itemStack.getItem() != Items.vanishingCopierItem)
 			return;
@@ -100,13 +102,22 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 		VanishingOptions isOptions = Items.vanishingCopierItem.getVanishingOptions(itemStack);
 		vanishingOptions.copy(isOptions);
 
-		if (!vanishingOptions.getSlot().isFull())
-		{
-			ItemStack is = isOptions.getSlot().extract(1);
-			vanishingOptions.getSlot().insert(is);
-		}
+		ItemStack isItemStack = isOptions.getSlot().getItemStack();
+		ItemStack teItemStack = vanishingOptions.getSlot().getItemStack();
+		if (isItemStack == null)
+			return;
 
-		worldObj.markBlockForUpdate(pos);
+		if (!applyItemStack(isItemStack, player, side, hitX, hitY, hitZ))
+			return;
+
+		isOptions.save();
+
+		if (ItemUtils.areItemStacksStackable(isItemStack, teItemStack))
+			return;
+
+		ItemStack copy = isItemStack.copy();
+		copy.stackSize = 1;
+		vanishingOptions.getSlot().setItemStack(copy);
 	}
 
 	@Override

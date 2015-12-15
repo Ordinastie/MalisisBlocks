@@ -42,6 +42,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -103,6 +105,7 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 		return getVanishingOptions(itemStack).getInventory();
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public MalisisGui getGui(ItemStack itemStack, MalisisInventoryContainer container)
 	{

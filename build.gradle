@@ -45,7 +45,7 @@ artifacts {
 }
 
 minecraft {
-	version = "1.8-11.14.3.1487"
+	version = "1.8-11.14.4.1563"
 	if(file("../../run").exists()) 	{
 		runDir = "../../run/assets"
 	}

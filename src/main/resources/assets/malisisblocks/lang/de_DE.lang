@@ -9,6 +9,7 @@ tile.block_mixer.name=Blockmischer
 tile.mixed_block.name=Gemischter Block
  
  
+ 
 config.simpleMixedBlockRendering=Einfaches Rendern von gemischten Blöcken
 config.simpleMixedBlockRendering.comment1=Aktiviert weniger attraktives Rendern gemischter Blöcke.
 config.simpleMixedBlockRendering.comment2=Aktiviere diese Option, wenn du Z-Fighting oder andere Rendering-Probleme erlebst.
@@ -18,6 +19,10 @@ config.enableVanishingGlitch.comment=Rahmen werden kurzzeitig instabil und falle
  
 config.vanishingGlitchChance=Häufigkeit des Wackelns von verschw. Rahmen
 config.vanishingGlitchChance.comment=Wie oft werden die Rahmen instabil.
+ 
+ 
+ 
+ 
  
 gui.block_mixer.simple_rendering=Einfaches zeichnen rendern
 gui.block_mixer.simple_rendering_tooltip=Blöcke benötigen ein Chunk-Update um den Effekt zu sehen.

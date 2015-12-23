@@ -9,6 +9,7 @@ tile.block_mixer.name=Mezclador de Bloques
 tile.mixed_block.name=Bloque Mixto
 
 
+
 config.simpleMixedBlockRendering=Renderizado de Bloques Mixtos Simple.
 config.simpleMixedBlockRendering.comment1=Permite un renderizado de Bloques Mixtos menos detallado.
 config.simpleMixedBlockRendering.comment2=Habilita esta opción si experimentas problemas de z-fighting o glitchs en el renderizado.

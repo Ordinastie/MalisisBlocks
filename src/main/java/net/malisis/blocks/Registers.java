@@ -29,11 +29,13 @@ import static net.malisis.blocks.MalisisBlocks.Items.*;
 import net.malisis.blocks.block.BlockMixer;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.block.PlayerSensor;
+import net.malisis.blocks.block.Swapper;
 import net.malisis.blocks.block.VanishingBlock;
 import net.malisis.blocks.block.VanishingDiamondBlock;
 import net.malisis.blocks.item.VanishingCopierItem;
 import net.malisis.blocks.tileentity.BlockMixerTileEntity;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
+import net.malisis.blocks.tileentity.SwapperTileEntity;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
 import net.minecraft.init.Blocks;
@@ -51,6 +53,8 @@ public class Registers
 		registerMixedBlock();
 
 		registerPlayerSensor();
+
+		registerSwapper();
 	}
 
 	private static void registerVanishingBlock()
@@ -103,5 +107,15 @@ public class Registers
 		// Sensor recipe
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(playerSensor), "ABA", "CCC", 'A', Items.iron_ingot, 'B', Items.redstone,
 				'C', "blockGlassColorless"));
+	}
+
+	private static void registerSwapper()
+	{
+		swapper = new Swapper();
+		swapper.register();
+
+		GameRegistry.registerTileEntity(SwapperTileEntity.class, "swapperTileEntity");
+		GameRegistry.addRecipe(new ItemStack(swapper), "AAA", "B B", "AAA", 'A', Items.iron_ingot, 'B', Items.comparator);
+
 	}
 }

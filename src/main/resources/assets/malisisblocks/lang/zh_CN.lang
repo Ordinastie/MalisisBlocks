@@ -9,6 +9,7 @@ tile.block_mixer.name=方块混合器
 tile.mixed_block.name=混合方块
 
 
+
 config.simpleMixedBlockRendering=简化混合方块的渲染
 config.simpleMixedBlockRendering.comment1=启用混合方块的流畅渲染.
 config.simpleMixedBlockRendering.comment2=如果你遇到了深度冲突或是渲染干扰,启用该选项.

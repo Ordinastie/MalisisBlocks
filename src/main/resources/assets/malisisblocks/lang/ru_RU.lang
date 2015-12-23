@@ -9,6 +9,7 @@ tile.block_mixer.name=Смешиватель блоков
 tile.mixed_block.name=Смешанный блок
 
 
+
 config.simpleMixedBlockRendering=Упрощённое отображение смешанных блоков
 config.simpleMixedBlockRendering.comment1=Включает менее качественное отображение для смешанных блоков.
 config.simpleMixedBlockRendering.comment2=Включите эту опцию, если наблюдаются ошибки в отображении блоков и эффектов мода.

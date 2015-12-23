@@ -27,6 +27,7 @@ package net.malisis.blocks;
 import net.malisis.blocks.block.BlockMixer;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.block.PlayerSensor;
+import net.malisis.blocks.block.Swapper;
 import net.malisis.blocks.block.VanishingBlock;
 import net.malisis.blocks.block.VanishingDiamondBlock;
 import net.malisis.blocks.item.VanishingCopierItem;
@@ -107,6 +108,7 @@ public class MalisisBlocks implements IMalisisMod
 		public static VanishingBlock vanishingBlock;
 		public static VanishingDiamondBlock vanishingDiamondBlock;
 		public static PlayerSensor playerSensor;
+		public static Swapper swapper;
 	}
 
 	public static class Items

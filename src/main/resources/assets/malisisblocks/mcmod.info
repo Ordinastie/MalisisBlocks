@@ -1,0 +1,16 @@
+[
+{
+  "modid": "malisisblocks",
+  "name": "MalisisBlocks",
+  "description": "Better doors!",
+  "version": "${version}",
+  "logoFile": "BalisisBlocks.png",
+  "mcversion": "${mcversion}",
+  "url": "http://github.com/Ordinastie/MalisisBlocks",
+  "updateUrl": "",
+  "authors": [ "Ordinastie" ],
+  "parent":"",
+  "screenshots": []
+		
+}
+]

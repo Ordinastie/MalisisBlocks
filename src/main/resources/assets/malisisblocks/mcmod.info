@@ -2,9 +2,9 @@
 {
   "modid": "malisisblocks",
   "name": "MalisisBlocks",
-  "description": "Better doors!",
+  "description": "New Blocks!",
   "version": "${version}",
-  "logoFile": "BalisisBlocks.png",
+  "logoFile": "MalisisBlocks.png",
   "mcversion": "${mcversion}",
   "url": "http://github.com/Ordinastie/MalisisBlocks",
   "updateUrl": "",

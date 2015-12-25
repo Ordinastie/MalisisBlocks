@@ -11,15 +11,15 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
     }
 }
 
-apply plugin: 'forge'
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-version = "1.8-1.1"
+version = "1.8-1.2"
 group = "net.malisis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "malisisblocks"
 libsDirName = "../releases"
@@ -73,7 +73,7 @@ processResources
         exclude 'mcmod.info'
     }
 }
-
+/*
 uploadArchives() 
 {
 	//dependsOn reobf
@@ -152,3 +152,4 @@ uploadArchives()
 		logger.log(LogLevel.ERROR, 'No upload url (project.mavenUrl) defined!');
 	}
 }
+*/

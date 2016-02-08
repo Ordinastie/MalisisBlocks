@@ -26,8 +26,10 @@ package net.malisis.blocks.block;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.tileentity.SwapperTileEntity;
-import net.malisis.core.block.IBlockDirectional;
 import net.malisis.core.block.MalisisBlock;
+import net.malisis.core.block.component.DirectionalComponent;
+import net.malisis.core.block.component.PowerComponent;
+import net.malisis.core.block.component.PowerComponent.Type;
 import net.malisis.core.renderer.icon.MalisisIcon;
 import net.malisis.core.renderer.icon.provider.IBlockIconProvider;
 import net.malisis.core.util.TileEntityUtils;
@@ -35,8 +37,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
@@ -52,7 +52,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author Ordinastie
  *
  */
-public class Swapper extends MalisisBlock implements ITileEntityProvider, IBlockDirectional
+public class Swapper extends MalisisBlock implements ITileEntityProvider
 {
 	public static PropertyBool POWERED = PropertyBool.create("powered");
 
@@ -62,18 +62,9 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider, IBlock
 		setCreativeTab(MalisisBlocks.tab);
 		setHardness(3.0F);
 		setName("swapper");
-	}
 
-	@Override
-	protected BlockState createBlockState()
-	{
-		return new BlockState(this, POWERED, IBlockDirectional.ALL);
-	}
-
-	@Override
-	public PropertyDirection getPropertyDirection()
-	{
-		return ALL;
+		addComponent(new DirectionalComponent(DirectionalComponent.ALL));
+		addComponent(new PowerComponent(Type.REDSTONE));
 	}
 
 	@Override
@@ -90,12 +81,12 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider, IBlock
 			return;
 
 		boolean powered = world.isBlockIndirectlyGettingPowered(pos) != 0;
-		if (isPowered(state) != powered)
+		if (PowerComponent.isPowered(state) != powered)
 		{
 			world.playSoundEffect(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, MalisisBlocks.modid + ":portal", 0.3F, 0.5F);
 			if (world.isRemote)
 				return;
-			world.setBlockState(pos, state.withProperty(POWERED, powered));
+			world.setBlockState(pos, state.withProperty(PowerComponent.getProperty(this), powered));
 			SwapperTileEntity te = TileEntityUtils.getTileEntity(SwapperTileEntity.class, world, pos);
 			if (te != null)
 				te.swap();
@@ -106,30 +97,6 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider, IBlock
 	public TileEntity createNewTileEntity(World worldIn, int meta)
 	{
 		return new SwapperTileEntity();
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta)
-	{
-		return super.getStateFromMeta(meta).withProperty(POWERED, (meta >> 3) != 0);
-		//return getDefaultState().withProperty(POWERED, meta != 0);
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state)
-	{
-		return super.getMetaFromState(state) + (isPowered(state) ? (1 << 3) : 0);
-		//return isPowered(state) ? 1 : 0;
-	}
-
-	public boolean isPowered(World world, BlockPos pos)
-	{
-		return isPowered(world.getBlockState(pos));
-	}
-
-	public boolean isPowered(IBlockState state)
-	{
-		return state.getBlock() == this && (boolean) state.getValue(POWERED);
 	}
 
 	@Override
@@ -163,7 +130,7 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider, IBlock
 		@Override
 		public MalisisIcon getIcon(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
 		{
-			return IBlockDirectional.getDirection(state) == side ? top : icon;
+			return side == EnumFacing.SOUTH ? top : icon;
 		}
 
 		@Override

@@ -5,15 +5,14 @@ import java.util.Random;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.core.block.BoundingBoxType;
-import net.malisis.core.block.IBlockDirectional;
 import net.malisis.core.block.MalisisBlock;
+import net.malisis.core.block.component.DirectionalComponent;
+import net.malisis.core.block.component.DirectionalComponent.Placement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -21,7 +20,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class PlayerSensor extends MalisisBlock implements IBlockDirectional
+import com.google.common.collect.Lists;
+
+public class PlayerSensor extends MalisisBlock
 {
 	public static PropertyBool POWERED = PropertyBool.create("powered");
 
@@ -32,25 +33,15 @@ public class PlayerSensor extends MalisisBlock implements IBlockDirectional
 		setName("player_sensor");
 		setTexture(MalisisBlocks.modid + ":blocks/player_sensor");
 
+		addComponent(new DirectionalComponent(DirectionalComponent.ALL, Placement.BLOCKSIDE));
+
 		setDefaultState(getDefaultState().withProperty(POWERED, false));
 	}
 
 	@Override
-	public PropertyDirection getPropertyDirection()
+	protected List<IProperty> getProperties()
 	{
-		return IBlockDirectional.ALL;
-	}
-
-	@Override
-	protected BlockState createBlockState()
-	{
-		return new BlockState(this, IBlockDirectional.ALL, POWERED);
-	}
-
-	@Override
-	public EnumFacing getPlacingDirection(EnumFacing side, EntityLivingBase placer)
-	{
-		return side;
+		return Lists.newArrayList(POWERED);
 	}
 
 	@Override
@@ -60,7 +51,7 @@ public class PlayerSensor extends MalisisBlock implements IBlockDirectional
 			return null;
 
 		float f = 0.125F;
-		switch (IBlockDirectional.getDirection(world, pos))
+		switch (DirectionalComponent.getDirection(world, pos))
 		{
 			case DOWN:
 				return new AxisAlignedBB(0.5F - f, 1 - f / 2, 0.5F - f, 0.5F + f, 1, 0.5F + f);
@@ -91,7 +82,7 @@ public class PlayerSensor extends MalisisBlock implements IBlockDirectional
 	@Override
 	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock)
 	{
-		EnumFacing dir = IBlockDirectional.getDirection(world, pos).getOpposite();
+		EnumFacing dir = DirectionalComponent.getDirection(world, pos).getOpposite();
 		if (!world.isSideSolid(pos.offset(dir), dir))
 		{
 			dropBlockAsItem(world, pos, getDefaultState(), 0);
@@ -115,7 +106,7 @@ public class PlayerSensor extends MalisisBlock implements IBlockDirectional
 	@Override
 	public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
 	{
-		if (isPowered(state) && IBlockDirectional.getDirection(world, pos) == side)
+		if (isPowered(state) && DirectionalComponent.getDirection(world, pos) == side)
 			return 15;
 		return 0;
 
@@ -135,7 +126,7 @@ public class PlayerSensor extends MalisisBlock implements IBlockDirectional
 
 	public AxisAlignedBB getDetectionBox(IBlockAccess world, BlockPos pos)
 	{
-		EnumFacing dir = IBlockDirectional.getDirection(world, pos);
+		EnumFacing dir = DirectionalComponent.getDirection(world, pos);
 		double x1 = pos.getX(), x2 = pos.getX();
 		double z1 = pos.getZ(), z2 = pos.getZ();
 		int yOffset = 1;
@@ -206,7 +197,7 @@ public class PlayerSensor extends MalisisBlock implements IBlockDirectional
 	private void notifyPower(World world, BlockPos pos, IBlockState state)
 	{
 		world.notifyNeighborsOfStateChange(pos, this);
-		world.notifyNeighborsOfStateChange(pos.offset(IBlockDirectional.getDirection(state).getOpposite()), this);
+		world.notifyNeighborsOfStateChange(pos.offset(DirectionalComponent.getDirection(state).getOpposite()), this);
 	}
 
 	@Override

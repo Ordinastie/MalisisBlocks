@@ -32,12 +32,12 @@ import net.malisis.blocks.tileentity.VanishingTileEntity;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -57,7 +57,7 @@ public class VanishingDiamondBlock extends VanishingBlock
 	}
 
 	@Override
-	public Class<? extends ItemBlock> getItemClass()
+	public Item getItem(Block block)
 	{
 		return null;
 	}

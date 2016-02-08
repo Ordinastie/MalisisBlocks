@@ -26,8 +26,8 @@ package net.malisis.blocks.block;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.tileentity.BlockMixerTileEntity;
-import net.malisis.core.block.IBlockDirectional;
 import net.malisis.core.block.MalisisBlock;
+import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.inventory.MalisisInventory;
 import net.malisis.core.renderer.icon.provider.SidesIconProvider;
 import net.malisis.core.util.TileEntityUtils;
@@ -43,7 +43,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockMixer extends MalisisBlock implements ITileEntityProvider, IBlockDirectional
+public class BlockMixer extends MalisisBlock implements ITileEntityProvider
 {
 	public BlockMixer()
 	{
@@ -51,6 +51,8 @@ public class BlockMixer extends MalisisBlock implements ITileEntityProvider, IBl
 		setCreativeTab(MalisisBlocks.tab);
 		setHardness(3.0F);
 		setName("block_mixer");
+
+		addComponent(new DirectionalComponent());
 	}
 
 	@Override

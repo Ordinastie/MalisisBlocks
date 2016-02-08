@@ -27,25 +27,24 @@ package net.malisis.blocks.block;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.item.MixedBlockBlockItem;
 import net.malisis.blocks.renderer.MixedBlockRenderer;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
-import net.malisis.core.block.IBlockDirectional;
 import net.malisis.core.block.MalisisBlock;
+import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.renderer.MalisisRendered;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -58,53 +57,31 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @MalisisRendered(MixedBlockRenderer.class)
-public class MixedBlock extends MalisisBlock implements ITileEntityProvider, IBlockDirectional
+public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 {
 	public MixedBlock()
 	{
 		super(Material.rock);
 		setName("mixed_block");
 		setHardness(0.7F);
+
+		addComponent(new DirectionalComponent(DirectionalComponent.ALL));
 	}
 
 	@Override
-	public Class<? extends ItemBlock> getItemClass()
+	public Item getItem(Block block)
 	{
-		return MixedBlockBlockItem.class;
-	}
-
-	@Override
-	public PropertyDirection getPropertyDirection()
-	{
-		return IBlockDirectional.ALL;
-	}
-
-	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
-	{
-		return getDefaultState().withProperty(IBlockDirectional.ALL, facing.getOpposite());
+		return new MixedBlockBlockItem(this);
 	}
 
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack)
 	{
-		if (!(itemStack.getItem() instanceof MixedBlockBlockItem))
-			return;
-
 		MixedBlockTileEntity te = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos);
 		if (te == null)
 			return;
 		te.set(itemStack);
-
-		if (MalisisBlocksSettings.enhancedMixedBlockPlacement.get())
-		{
-			EnumFacing dir = EntityUtils.getEntityFacing(placer, true);
-			if (!placer.isSneaking())
-				dir = dir.getOpposite();
-			world.setBlockState(pos, state.withProperty(IBlockDirectional.ALL, dir));
-		}
-		else
-			world.notifyBlockOfStateChange(pos, this);
+		world.notifyBlockOfStateChange(pos, this);
 	}
 
 	@Override

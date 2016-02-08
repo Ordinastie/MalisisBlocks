@@ -30,7 +30,7 @@ import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.item.MixedBlockBlockItem;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
-import net.malisis.core.block.IBlockDirectional;
+import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
@@ -93,7 +93,7 @@ public class MixedBlockRenderer extends MalisisRenderer
 			state1 = pair.getLeft();
 			state2 = pair.getRight();
 
-			mixedBlockState = ((MixedBlock) block).getDefaultState().withProperty(IBlockDirectional.ALL, EnumFacing.SOUTH);
+			mixedBlockState = ((MixedBlock) block).getDefaultState().withProperty(DirectionalComponent.ALL, EnumFacing.SOUTH);
 		}
 		else if (renderType == RenderType.BLOCK)
 		{
@@ -152,7 +152,7 @@ public class MixedBlockRenderer extends MalisisRenderer
 		float offsetX = 0;
 		float offestY = 0;
 		float offsetZ = 0;
-		EnumFacing dir = IBlockDirectional.getDirection(mixedBlockState);
+		EnumFacing dir = DirectionalComponent.getDirection(mixedBlockState);
 
 		if (dir == EnumFacing.DOWN || dir == EnumFacing.UP)
 		{
@@ -192,7 +192,7 @@ public class MixedBlockRenderer extends MalisisRenderer
 
 	private void drawPass(boolean firstBlock)
 	{
-		EnumFacing dir = IBlockDirectional.getDirection(mixedBlockState);
+		EnumFacing dir = DirectionalComponent.getDirection(mixedBlockState);
 		if (firstBlock)
 			dir = dir.getOpposite();
 

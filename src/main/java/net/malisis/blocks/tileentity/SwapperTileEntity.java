@@ -24,7 +24,7 @@
 
 package net.malisis.blocks.tileentity;
 
-import net.malisis.core.block.IBlockDirectional;
+import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.util.BlockPosUtils;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.ItemUtils;
@@ -82,7 +82,7 @@ public class SwapperTileEntity extends TileEntity
 
 	private AxisAlignedBB getAABB()
 	{
-		EnumFacing direction = IBlockDirectional.getDirection(getWorld(), getPos());
+		EnumFacing direction = DirectionalComponent.getDirection(getWorld(), getPos());
 		AxisAlignedBB aabb = new AxisAlignedBB(getPos().add(-1, -1, -1), getPos().add(2, 2, 2));
 		aabb = aabb.offset(direction.getFrontOffsetX() * 2, direction.getFrontOffsetY() * 2, direction.getFrontOffsetZ() * 2);
 		return aabb;
@@ -152,8 +152,8 @@ public class SwapperTileEntity extends TileEntity
 				{
 					int index = x + y * 3 + z * 9;
 					states[x][y][z] = MBlockState.fromNBT(tag, "block_" + index, "metadata_" + index);
-					if(tag.hasKey("tileEntity_" + index))
-					tileEntities[x][y][z] = tag.getCompoundTag("tileEntity_" + index);
+					if (tag.hasKey("tileEntity_" + index))
+						tileEntities[x][y][z] = tag.getCompoundTag("tileEntity_" + index);
 				}
 			}
 		}

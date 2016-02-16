@@ -98,13 +98,13 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side)
+	public int getWeakPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side)
 	{
 		return isPowered(state) ? 15 : 0;
 	}
 
 	@Override
-	public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
+	public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
 	{
 		if (isPowered(state) && DirectionalComponent.getDirection(world, pos) == side)
 			return 15;
@@ -214,7 +214,7 @@ public class PlayerSensor extends MalisisBlock
 
 	public static boolean isPowered(IBlockState state)
 	{
-		return (boolean) state.getValue(POWERED);
+		return state.getValue(POWERED);
 	}
 
 	@Override

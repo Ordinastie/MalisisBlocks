@@ -39,6 +39,7 @@ import net.malisis.core.renderer.model.MalisisModel;
 import net.malisis.core.renderer.model.loader.TextureModelLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.TRSRTransformation;
@@ -124,7 +125,7 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 				GlStateManager.translate(rx, ry, rz);
 			}
 
-			Minecraft.getMinecraft().getRenderItem().renderItemModel(copiedStack);
+			Minecraft.getMinecraft().getRenderItem().renderItem(copiedStack, ItemCameraTransforms.TransformType.GROUND);
 		}
 	}
 

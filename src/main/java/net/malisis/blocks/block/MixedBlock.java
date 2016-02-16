@@ -110,7 +110,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
+	public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
 	{
 		MixedBlockTileEntity te = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos);
 		if (te == null || te.getState1() == null || te.getState2() == null)

@@ -43,16 +43,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-public class VanishingTileEntity extends TileEntity implements IUpdatePlayerListBox
+public class VanishingTileEntity extends TileEntity implements ITickable
 {
 	public final static int maxTransitionTime = 8;
 	public final static int maxVibratingTime = 15;

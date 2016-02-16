@@ -41,7 +41,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -50,7 +49,6 @@ import net.minecraftforge.client.ForgeHooksClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-@SuppressWarnings("deprecation")
 public class VanishingBlockRenderer extends MalisisRenderer
 {
 	private Shape cube = new Cube();
@@ -98,7 +96,7 @@ public class VanishingBlockRenderer extends MalisisRenderer
 		}
 
 		BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-		wr.setVertexFormat(DefaultVertexFormats.BLOCK);
+		//wr.setVertexFormat(DefaultVertexFormats.BLOCK);
 		try
 		{
 			if (tileEntity.getCopiedState().getBlock().canRenderInLayer(getRenderLayer()))
@@ -172,7 +170,7 @@ public class VanishingBlockRenderer extends MalisisRenderer
 		if (tileEntity.getCopiedState() != null)
 		{
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			wr.setVertexFormat(DefaultVertexFormats.BLOCK);
+			//wr.setVertexFormat(DefaultVertexFormats.BLOCK);
 			try
 			{
 				boolean smbr = MalisisBlocksSettings.simpleMixedBlockRendering.get();

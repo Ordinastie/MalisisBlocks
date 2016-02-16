@@ -40,7 +40,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -51,7 +50,7 @@ import com.google.common.eventbus.Subscribe;
  * @author Ordinastie
  *
  */
-public class VanishingDiamondTileEntity extends VanishingTileEntity implements IDirectInventoryProvider, IUpdatePlayerListBox
+public class VanishingDiamondTileEntity extends VanishingTileEntity implements IDirectInventoryProvider
 {
 	protected int changedPowerStateTimer;
 	protected VanishingOptions vanishingOptions = new VanishingOptions();

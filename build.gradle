@@ -79,86 +79,16 @@ processResources
         exclude 'mcmod.info'
     }
 }
-/*
-uploadArchives() 
-{
-	//dependsOn reobf
-	
-	if (project.mavenUrl != null) 
-	{
-		repositories 
-		{
-			logger.info('Publishing to files server')
-			mavenDeployer 
-			{
-				repository(url: project.mavenUrl) 
-				{
-					authentication(userName: project.mavenUser, password: project.mavenPassword)
-				}
-				
-				addFilter('deobf') 
-				{
-					artifact, file -> artifact.attributes['classifier'] == 'dev'
-				}				
-				pom('deobf').version = project.version
-				
-				addFilter('universal') 
-				{
-					artifact, file -> artifact.attributes['classifier'] == null
-				}
-				pom('universal').version = project.version
-				
-				pom 
-				{
-					groupId = project.group
-					version = project.version
-					artifactId = project.archivesBaseName
-					project 
-					{
-						name project.archivesBaseName
-						packaging 'jar'
-						description 'Mixed blocks and vanishing blocks.'
-						url 'https://github.com/Ordinastie/MalisisBlocks'
-						scm 
-						{
-							url 'scm:git:git@github.com:Ordinastie/MalisisBlocks.git'
-							connection 'scm:git:git@github.com:Ordinastie/MalisisBlocks.git'
-							developerConnection 'scm:git:git@github.com:Ordinastie/MalisisBlocks.git'
-						}
-						issueManagement 
-						{
-							system 'github'
-							url 'https://github.com/Ordinastie/MalisisBlocks/issues'
-						}
-						licenses 
-						{
-							license 
-							{
-								name 'MIT'
-								url 'http://opensource.org/licenses/MIT'
-								distribution 'repo'
-							}
-						}
-						developers 
-						{
-							developer 
-							{
-								id 'Ordinastie'
-								name 'Ordinastie'
-								roles { role 'developer' }
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	else 
-	{
-		logger.log(LogLevel.ERROR, 'No upload url (project.mavenUrl) defined!');
-	}
+
+def commonManifest = {
+		mainAttributes(	"Built-By": "Ordinastie",
+						"Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
+						"Implementation-Title": name,
+						"Implementation-Version": version,
+						"Implementation-Vendor": url)
 }
-*/
+jar.manifest commonManifest
+
 
 if (project.hasProperty('curseapi')) {
 	curseforge {

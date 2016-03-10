@@ -40,7 +40,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 
 public class ProxyAccess
 {
-	private static WeakHashMap<IBlockAccess, IBlockAccess> cache = new WeakHashMap();
+	private static WeakHashMap<IBlockAccess, IBlockAccess> cache = new WeakHashMap<>();
 	private static boolean worldInstanciationFailed = false;
 
 	private interface IProxyAccess

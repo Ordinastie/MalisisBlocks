@@ -49,7 +49,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-public class VanishingBlockRenderer extends MalisisRenderer
+public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 {
 	private Shape cube = new Cube();
 	public Random rand = new Random();
@@ -64,7 +64,7 @@ public class VanishingBlockRenderer extends MalisisRenderer
 	public void render()
 	{
 		cube.resetState();
-		tileEntity = (VanishingTileEntity) super.tileEntity;
+		tileEntity = super.tileEntity;
 		if (renderType == RenderType.TILE_ENTITY)
 			renderVanishingTileEntity();
 		else if (renderType == RenderType.ITEM)

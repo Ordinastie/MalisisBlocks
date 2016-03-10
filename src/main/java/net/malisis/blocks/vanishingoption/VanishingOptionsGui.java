@@ -110,7 +110,7 @@ public class VanishingOptionsGui extends MalisisGui
 			i++;
 		}
 
-		UIContainer cont = new UIContainer<UIContainer>(this, 50, 60).setPosition(0, 40, Anchor.RIGHT);
+		UIContainer<?> cont = new UIContainer<>(this, 50, 60).setPosition(0, 40, Anchor.RIGHT);
 
 		duration = new UITextField(this, "" + vanishingOptions.getDuration()).setSize(30, 0).setPosition(0, 10, Anchor.CENTER)
 				.register(this);
@@ -135,8 +135,9 @@ public class VanishingOptionsGui extends MalisisGui
 	}
 
 	@Subscribe
-	public void onConfigChanged(ComponentEvent.ValueChange event)
+	public void onConfigChanged(ComponentEvent.ValueChange<?, ?> event)
 	{
+		@SuppressWarnings("unchecked")
 		Pair<EnumFacing, DataType> data = (Pair<EnumFacing, DataType>) event.getComponent().getData();
 		int time = event.getComponent() instanceof UITextField ? NumberUtils.toInt((String) event.getNewValue()) : 0;
 		boolean checked = event.getComponent() instanceof UICheckBox ? (boolean) event.getNewValue() : false;

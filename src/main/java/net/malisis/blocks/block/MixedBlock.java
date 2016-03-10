@@ -24,7 +24,6 @@
 
 package net.malisis.blocks.block;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.malisis.blocks.item.MixedBlockBlockItem;
@@ -55,6 +54,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.collect.Lists;
 
 @MalisisRendered(MixedBlockRenderer.class)
 public class MixedBlock extends MalisisBlock implements ITileEntityProvider
@@ -165,7 +166,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	@Override
 	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 	{
-		return new ArrayList<ItemStack>();
+		return Lists.newArrayList();
 	}
 
 	@Override

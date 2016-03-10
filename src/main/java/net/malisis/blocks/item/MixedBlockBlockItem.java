@@ -105,7 +105,7 @@ public class MixedBlockBlockItem extends ItemBlock
 	}
 
 	@Override
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean advancedTooltip)
+	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean advancedTooltip)
 	{
 		if (itemStack.getTagCompound() == null)
 			return;
@@ -123,7 +123,7 @@ public class MixedBlockBlockItem extends ItemBlock
 
 	public static Pair<IBlockState, IBlockState> readNBT(NBTTagCompound nbt)
 	{
-		return new ImmutablePair(MBlockState.fromNBT(nbt, "block1", "metadata1"), MBlockState.fromNBT(nbt, "block2", "metadata2"));
+		return new ImmutablePair<>(MBlockState.fromNBT(nbt, "block1", "metadata1"), MBlockState.fromNBT(nbt, "block2", "metadata2"));
 	}
 
 	public static NBTTagCompound writeNBT(NBTTagCompound nbt, IBlockState state1, IBlockState state2)

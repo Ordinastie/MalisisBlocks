@@ -49,10 +49,9 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
-public class MixedBlockRenderer extends MalisisRenderer
+public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 {
 	private IBlockState mixedBlockState;
-	private MixedBlockTileEntity tileEntity;
 	private Shape shape;
 	private Shape simpleShape;
 	private Shape[][] shapes;
@@ -97,7 +96,7 @@ public class MixedBlockRenderer extends MalisisRenderer
 		}
 		else if (renderType == RenderType.BLOCK)
 		{
-			tileEntity = (MixedBlockTileEntity) super.tileEntity;
+			tileEntity = super.tileEntity;
 			if (tileEntity == null)
 				return false;
 			state1 = tileEntity.getState1();

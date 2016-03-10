@@ -76,7 +76,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		WOOD, IRON, GOLD, DIAMOND;
 	};
 
-	public static final PropertyEnum TYPE = PropertyEnum.create("type", Type.class);
+	public static final PropertyEnum<Type> TYPE = PropertyEnum.create("type", Type.class);
 	public static PropertyBool POWERED = PropertyBool.create("powered");
 	public static PropertyBool TRANSITION = PropertyBool.create("transition");
 
@@ -133,7 +133,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 
 	public boolean isPowered(IBlockState state)
 	{
-		return state.getBlock() == this && (boolean) state.getValue(POWERED);
+		return state.getBlock() == this && state.getValue(POWERED);
 	}
 
 	public boolean shouldDefer(VanishingTileEntity te)
@@ -280,7 +280,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity collidingEntity)
+	public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
@@ -340,7 +340,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List list)
+	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list)
 	{
 		for (Type type : Type.values())
 			list.add(new ItemStack(item, 1, type.ordinal()));
@@ -349,7 +349,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	@Override
 	public int damageDropped(IBlockState state)
 	{
-		return ((Type) state.getValue(TYPE)).ordinal();
+		return state.getValue(TYPE).ordinal();
 	}
 
 	@Override
@@ -385,13 +385,13 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return ((Type) state.getValue(TYPE)).ordinal() + ((boolean) state.getValue(POWERED) ? 8 : 0);
+		return state.getValue(TYPE).ordinal() + (state.getValue(POWERED) ? 8 : 0);
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata)
 	{
-		return new VanishingTileEntity((Type) getStateFromMeta(metadata).getValue(TYPE));
+		return new VanishingTileEntity(getStateFromMeta(metadata).getValue(TYPE));
 	}
 
 	@Override

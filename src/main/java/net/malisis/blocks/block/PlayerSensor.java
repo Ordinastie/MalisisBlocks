@@ -39,7 +39,7 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	protected List<IProperty> getProperties()
+	protected List<IProperty<?>> getProperties()
 	{
 		return Lists.newArrayList(POWERED);
 	}
@@ -184,7 +184,7 @@ public class PlayerSensor extends MalisisBlock
 
 		world.scheduleBlockUpdate(pos, this, 5, 0);
 
-		List list = world.getEntitiesWithinAABB(EntityPlayer.class, this.getDetectionBox(world, pos));
+		List<EntityPlayer> list = world.getEntitiesWithinAABB(EntityPlayer.class, this.getDetectionBox(world, pos));
 		boolean gettingPowered = list != null && !list.isEmpty();
 
 		if (powered != gettingPowered)

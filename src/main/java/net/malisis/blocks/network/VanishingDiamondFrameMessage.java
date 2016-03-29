@@ -34,8 +34,9 @@ import net.malisis.core.network.MalisisMessage;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -69,13 +70,14 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 			if (te == null)
 				return;
 			vanishingOptions = te.getVanishingOptions();
+			TileEntityUtils.notifyUpdate(te);
 		}
 		else
 		{
-			if (!EntityUtils.isEquipped(player, Items.vanishingCopierItem))
+			if (!EntityUtils.isEquipped(player, Items.vanishingCopierItem, EnumHand.MAIN_HAND))
 				return;
 
-			vanishingOptions = Items.vanishingCopierItem.getVanishingOptions(player.getCurrentEquippedItem());
+			vanishingOptions = Items.vanishingCopierItem.getVanishingOptions(player.getHeldItem(EnumHand.MAIN_HAND));
 		}
 
 		if (vanishingOptions == null)
@@ -83,9 +85,7 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 
 		vanishingOptions.set(message.facing, message.type, message.time, message.checked);
 
-		if (message.isTileEntity)
-			player.worldObj.markBlockForUpdate(message.pos);
-		else
+		if (!message.isTileEntity)
 			vanishingOptions.save();
 	}
 
@@ -161,7 +161,6 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 			else
 				buf.writeInt(time);
 		}
-
 	}
 
 }

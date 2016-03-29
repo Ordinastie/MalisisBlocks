@@ -14,9 +14,9 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -45,7 +45,7 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockAccess world, BlockPos pos, BoundingBoxType type)
+	public AxisAlignedBB getBoundingBox(IBlockAccess world, BlockPos pos, IBlockState state, BoundingBoxType type)
 	{
 		if (type == BoundingBoxType.COLLISION)
 			return null;
@@ -98,13 +98,13 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	public int getWeakPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side)
+	public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		return isPowered(state) ? 15 : 0;
 	}
 
 	@Override
-	public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
+	public int getStrongPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		if (isPowered(state) && DirectionalComponent.getDirection(world, pos) == side)
 			return 15;
@@ -113,7 +113,7 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	public boolean canProvidePower()
+	public boolean canProvidePower(IBlockState state)
 	{
 		return true;
 	}
@@ -201,13 +201,13 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	public boolean isOpaqueCube()
+	public boolean isOpaqueCube(IBlockState state)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube()
+	public boolean isFullCube(IBlockState state)
 	{
 		return false;
 	}

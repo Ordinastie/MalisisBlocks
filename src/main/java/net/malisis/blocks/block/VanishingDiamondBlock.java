@@ -40,8 +40,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
@@ -54,7 +55,7 @@ public class VanishingDiamondBlock extends VanishingBlock
 	{
 		super();
 		setName("vanishing_block_diamond");
-		setDefaultState(blockState.getBaseState().withProperty(TYPE, Type.DIAMOND));
+		setDefaultState(getDefaultState().withProperty(TYPE, Type.DIAMOND));
 	}
 
 	@Override
@@ -74,23 +75,22 @@ public class VanishingDiamondBlock extends VanishingBlock
 	{}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (world.isRemote)
 			return true;
 
 		VanishingDiamondTileEntity te = TileEntityUtils.getTileEntity(VanishingDiamondTileEntity.class, world, pos);
-
-		if (!EntityUtils.isEquipped(player, Items.vanishingCopierItem))
+		if (!EntityUtils.isEquipped(player, Items.vanishingCopierItem, hand))
 		{
 			MalisisInventory.open((EntityPlayerMP) player, te);
 			return true;
 		}
 
 		if (player.isSneaking())
-			te.copyOptions(player.getHeldItem());
+			te.copyOptions(player.getHeldItem(hand));
 		else
-			te.pasteOptions(player.getHeldItem(), player, side, hitX, hitY, hitZ);
+			te.pasteOptions(player.getHeldItem(hand), player, side, hitX, hitY, hitZ);
 		return true;
 	}
 

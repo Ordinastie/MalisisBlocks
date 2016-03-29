@@ -35,11 +35,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
@@ -76,7 +76,10 @@ public class SwapperTileEntity extends TileEntity
 			storeState(x, y, z, worldState);
 			applyState(p, storedState);
 
-			getWorld().markAndNotifyBlock(p, getWorld().getChunkFromBlockCoords(p), worldState.getLeft(), storedState.getLeft(), 2);
+			IBlockState stored = storedState.getLeft();
+			if (stored == null)
+				stored = Blocks.air.getDefaultState();
+			getWorld().markAndNotifyBlock(p, getWorld().getChunkFromBlockCoords(p), worldState.getLeft(), stored, 2);
 		}
 
 	}
@@ -189,11 +192,11 @@ public class SwapperTileEntity extends TileEntity
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeToNBT(nbt);
-		return new S35PacketUpdateTileEntity(pos, 0, nbt);
+		return new SPacketUpdateTileEntity(pos, 0, nbt);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		this.readFromNBT(packet.getNbtCompound());
 		//force rerender of the block on the client

@@ -39,7 +39,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -100,7 +100,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 
 		VanishingOptions isOptions = Items.vanishingCopierItem.getVanishingOptions(itemStack);
 		vanishingOptions.copy(isOptions);
-
+		TileEntityUtils.notifyUpdate(this);
 		ItemStack isItemStack = isOptions.getSlot().getItemStack();
 		ItemStack teItemStack = vanishingOptions.getSlot().getItemStack();
 		if (isItemStack == null)
@@ -155,7 +155,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 	public void onSlotChanged(InventoryEvent.SlotChanged event)
 	{
 		setBlockState(event.getSlot().getItemStack(), null, EnumFacing.UP, 0.5F, 0.5F, 0.5F);
-		worldObj.markBlockForUpdate(pos);
+		TileEntityUtils.notifyUpdate(this);
 	}
 
 	@Override
@@ -173,11 +173,11 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		super.onDataPacket(net, packet);
 		TileEntityUtils.updateGui(this);
-		worldObj.markBlockForUpdate(pos);
+		TileEntityUtils.notifyUpdate(this);
 	}
 
 }

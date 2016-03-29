@@ -29,7 +29,7 @@ import java.util.Random;
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.ProxyAccess;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
-import net.malisis.core.MalisisCore;
+import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
@@ -40,10 +40,10 @@ import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
@@ -67,12 +67,6 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 		tileEntity = super.tileEntity;
 		if (renderType == RenderType.TILE_ENTITY)
 			renderVanishingTileEntity();
-		else if (renderType == RenderType.ITEM)
-		{
-			RenderParameters rp = new RenderParameters();
-			rp.useBlockBounds.set(false);
-			drawShape(cube, rp);
-		}
 		else if (renderType == RenderType.BLOCK)
 		{
 			renderVanishingBlock();
@@ -90,7 +84,7 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 
 		if (tileEntity.getCopiedState() == null)
 		{
-			if (getRenderLayer() == EnumWorldBlockLayer.CUTOUT_MIPPED)
+			if (getRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED)
 				drawShape(cube);
 			return;
 		}
@@ -101,13 +95,13 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 		{
 			if (tileEntity.getCopiedState().getBlock().canRenderInLayer(getRenderLayer()))
 			{
-				if (tileEntity.getCopiedState().getBlock().getRenderType() == MalisisCore.malisisRenderType)
-					blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), wr);
+				if (tileEntity.getCopiedState().getBlock() instanceof MalisisBlock)
+					vertexDrawn |= blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), buffer);
 				else
 				{
-					IBakedModel model = blockRenderer.getModelFromBlockState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
+					IBakedModel model = blockRenderer.getModelForState(tileEntity.getCopiedState());
 					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
-							tileEntity.getCopiedState(), pos, wr, false);
+							tileEntity.getCopiedState(), pos, buffer, false);
 				}
 			}
 		}
@@ -167,76 +161,83 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 		else if (tileEntity.blockDrawn)
 			return;
 
-		if (tileEntity.getCopiedState() != null)
+		//no state copied, draw regular cube model for the Vanishing Block
+		if (tileEntity.getCopiedState() == null)
 		{
-			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			//wr.setVertexFormat(DefaultVertexFormats.BLOCK);
-			try
-			{
-				boolean smbr = MalisisBlocksSettings.simpleMixedBlockRendering.get();
-				MalisisBlocksSettings.simpleMixedBlockRendering.set(true);
+			drawShape(cube, rp);
+			return;
+		}
 
-				BlockPos translate = BlockPosUtils.chunkPosition(pos);
-				//GlStateManager.pushMatrix();
-				GlStateManager.translate(0.5F, 0.5F, 0.5F);
-				GlStateManager.scale(scale, scale, scale);
-				if (tileEntity.getCopiedState().getBlock().getRenderType() == MalisisCore.malisisRenderType)
-					GlStateManager.translate(-translate.getX(), -translate.getY(), -translate.getZ());
+		BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		//wr.setVertexFormat(DefaultVertexFormats.BLOCK);
+		try
+		{
+			boolean smbr = MalisisBlocksSettings.simpleMixedBlockRendering.get();
+			MalisisBlocksSettings.simpleMixedBlockRendering.set(true);
+
+			BlockPos translate = BlockPosUtils.chunkPosition(pos);
+			//GlStateManager.pushMatrix();
+			GlStateManager.translate(0.5F, 0.5F, 0.5F);
+			GlStateManager.scale(scale, scale, scale);
+			if (tileEntity.getCopiedState().getBlock() instanceof MalisisBlock) //assume MalisisBlock is MalisisRendered
+			{
+				GlStateManager.translate(-translate.getX(), -translate.getY(), -translate.getZ());
+				//GlStateManager.translate(0, 0, 0);
+			}
+			else
+				GlStateManager.translate(-pos.getX(), -pos.getY(), -pos.getZ());
+			GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+
+			GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
+			//				GL11.glAlphaFunc(GL11.GL_GREATER, 1F);
+			//GL14.glBlendColor(0, 0, 0, 1 - scale);
+			//TODO: render underlying model with vanishing block texture
+			//				renderBlocks.overrideBlockTexture = block.getIcon(blockMetadata, 0);
+			//				rendered = renderBlocks.renderBlockByRenderType(tileEntity.copiedBlock, x, y, z);
+			//				renderBlocks.overrideBlockTexture = null;
+			//				next();
+
+			GL14.glBlendColor(0, 0, 0, scale);
+			for (BlockRenderLayer layer : BlockRenderLayer.values())
+			{
+				if (!tileEntity.getCopiedState().getBlock().canRenderInLayer(layer))
+					continue;
+
+				ForgeHooksClient.setRenderLayer(layer);
+				if (layer == BlockRenderLayer.TRANSLUCENT)
+					GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+				if (tileEntity.getCopiedState().getBlock() instanceof MalisisBlock)
+				{
+					rendered |= blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), buffer);
+					//drawShape(cube, rp);
+				}
 				else
-					GlStateManager.translate(-pos.getX(), -pos.getY(), -pos.getZ());
-				GlStateManager.translate(-0.5F, -0.5F, -0.5F);
-
-				GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
-				//				GL11.glAlphaFunc(GL11.GL_GREATER, 1F);
-				//GL14.glBlendColor(0, 0, 0, 1 - scale);
-				//TODO: render underlying model with vanishing block texture
-				//				renderBlocks.overrideBlockTexture = block.getIcon(blockMetadata, 0);
-				//				rendered = renderBlocks.renderBlockByRenderType(tileEntity.copiedBlock, x, y, z);
-				//				renderBlocks.overrideBlockTexture = null;
-				//				next();
-
-				GL14.glBlendColor(0, 0, 0, scale);
-				for (EnumWorldBlockLayer layer : EnumWorldBlockLayer.values())
 				{
-					if (!tileEntity.getCopiedState().getBlock().canRenderInLayer(layer))
-						continue;
-
-					ForgeHooksClient.setRenderLayer(layer);
-					if (layer == EnumWorldBlockLayer.TRANSLUCENT)
-						GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-					if (tileEntity.getCopiedState().getBlock().getRenderType() == MalisisCore.malisisRenderType)
-						blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), wr);
-					else
-					{
-						IBakedModel model = blockRenderer.getModelFromBlockState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
-						rendered |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
-								tileEntity.getCopiedState(), pos, wr, false);
-					}
-
-					next();
+					IBakedModel model = blockRenderer.getModelForState(tileEntity.getCopiedState());
+					rendered |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
+							tileEntity.getCopiedState(), pos, buffer, false);
 				}
 
-				if (!rendered)
-					drawShape(cube, rp);
-
-				//GlStateManager.popMatrix();
-
-				if (tileEntity.getCopiedTileEntity() != null)
-				{
-					clean();
-					TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity.getCopiedTileEntity(), partialTick, 0);
-				}
-
-				MalisisBlocksSettings.simpleMixedBlockRendering.set(smbr);
-
+				next();
 			}
-			catch (Exception e)
-			{
+
+			if (!rendered)
 				drawShape(cube, rp);
+
+			//GlStateManager.popMatrix();
+
+			if (tileEntity.getCopiedTileEntity() != null)
+			{
+				clean();
+				TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity.getCopiedTileEntity(), partialTick, 0);
 			}
+
+			MalisisBlocksSettings.simpleMixedBlockRendering.set(smbr);
 
 		}
-		else
+		catch (Exception e)
+		{
 			drawShape(cube, rp);
+		}
 	}
 }

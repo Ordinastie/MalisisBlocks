@@ -26,6 +26,7 @@ package net.malisis.blocks;
 
 import static net.malisis.blocks.MalisisBlocks.Blocks.*;
 import static net.malisis.blocks.MalisisBlocks.Items.*;
+import net.malisis.blocks.MalisisBlocks.Sounds;
 import net.malisis.blocks.block.BlockMixer;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.block.PlayerSensor;
@@ -38,6 +39,7 @@ import net.malisis.blocks.tileentity.MixedBlockTileEntity;
 import net.malisis.blocks.tileentity.SwapperTileEntity;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
+import net.malisis.core.MalisisRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -55,6 +57,8 @@ public class Registers
 		registerPlayerSensor();
 
 		registerSwapper();
+
+		registerSounds();
 	}
 
 	private static void registerVanishingBlock()
@@ -117,5 +121,10 @@ public class Registers
 		GameRegistry.registerTileEntity(SwapperTileEntity.class, "swapperTileEntity");
 		GameRegistry.addRecipe(new ItemStack(swapper), "AAA", "B B", "AAA", 'A', Items.iron_ingot, 'B', Items.comparator);
 
+	}
+
+	private static void registerSounds()
+	{
+		Sounds.portal = MalisisRegistry.registerSound(MalisisBlocks.modid, "portal");
 	}
 }

@@ -26,11 +26,14 @@ package net.malisis.blocks.renderer;
 
 import java.util.List;
 
+import javax.vecmath.Matrix4f;
+
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.item.MixedBlockBlockItem;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
 import net.malisis.core.block.component.DirectionalComponent;
+import net.malisis.core.renderer.DefaultRenderer;
 import net.malisis.core.renderer.MalisisRenderer;
 import net.malisis.core.renderer.RenderParameters;
 import net.malisis.core.renderer.RenderType;
@@ -43,8 +46,9 @@ import net.minecraft.block.BlockGrass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
@@ -111,6 +115,12 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 	}
 
 	@Override
+	public Matrix4f getTransform(TransformType tranformType)
+	{
+		return DefaultRenderer.block.getTransform(tranformType);
+	}
+
+	@Override
 	public void render()
 	{
 		if (!setup())
@@ -138,8 +148,7 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 
 	private void setColor()
 	{
-		int color = renderType == RenderType.BLOCK ? block.colorMultiplier(world, pos) : block.getBlockColor();
-		rp.colorMultiplier.set(block instanceof BlockGrass ? 0xFFFFFF : color);
+		rp.colorMultiplier.set(block instanceof BlockGrass ? 0xFFFFFF : colorMultiplier(world, pos, blockState));
 	}
 
 	private void renderSimple()
@@ -213,14 +222,13 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 
 	protected boolean shouldShadeFace(Boolean firstBlock)
 	{
-		if (block.canRenderInLayer(EnumWorldBlockLayer.TRANSLUCENT) || block.canRenderInLayer(EnumWorldBlockLayer.CUTOUT)
-				|| block.canRenderInLayer(EnumWorldBlockLayer.CUTOUT_MIPPED))
+		if (block.canRenderInLayer(BlockRenderLayer.TRANSLUCENT) || block.canRenderInLayer(BlockRenderLayer.CUTOUT)
+				|| block.canRenderInLayer(BlockRenderLayer.CUTOUT_MIPPED))
 			return true;
 
 		IBlockState other = firstBlock ? state2 : state1;
-		if (other.getBlock().canRenderInLayer(EnumWorldBlockLayer.TRANSLUCENT)
-				|| other.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT)
-				|| other.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT_MIPPED))
+		if (other.getBlock().canRenderInLayer(BlockRenderLayer.TRANSLUCENT) || other.getBlock().canRenderInLayer(BlockRenderLayer.CUTOUT)
+				|| other.getBlock().canRenderInLayer(BlockRenderLayer.CUTOUT_MIPPED))
 			return true;
 
 		return !firstBlock;
@@ -238,6 +246,6 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 		if (p.direction.get() == null)
 			return true;
 
-		return mixedBlockState.getBlock().shouldSideBeRendered(world, pos.offset(p.direction.get()), p.direction.get());
+		return mixedBlockState.shouldSideBeRendered(world, pos.offset(p.direction.get()), p.direction.get());
 	}
 }

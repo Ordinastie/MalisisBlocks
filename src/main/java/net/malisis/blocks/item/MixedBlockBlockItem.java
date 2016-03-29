@@ -28,7 +28,10 @@ import java.util.List;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.block.MixedBlock;
+import net.malisis.blocks.renderer.MixedBlockRenderer;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
+import net.malisis.core.block.MalisisBlock;
+import net.malisis.core.renderer.MalisisRendered;
 import net.malisis.core.util.ItemUtils;
 import net.malisis.core.util.MBlockState;
 import net.minecraft.block.Block;
@@ -40,6 +43,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.World;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -49,6 +53,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+@MalisisRendered(MixedBlockRenderer.class)
 public class MixedBlockBlockItem extends ItemBlock
 {
 	private static BiMap<Item, IBlockState> itemsAllowed = HashBiMap.create();
@@ -75,8 +80,9 @@ public class MixedBlockBlockItem extends ItemBlock
 		if (itemsAllowed.get(itemStack.getItem()) != null)
 			return true;
 
-		Block block = Block.getBlockFromItem(itemStack.getItem());
-		return block != null && !(block instanceof MixedBlock) && block.getRenderType() != -1;
+		IBlockState state = ItemUtils.getStateFromItemStack(itemStack);
+		return state != null && !(state.getBlock() instanceof MixedBlock)
+				&& (state.getRenderType() == EnumBlockRenderType.MODEL || state.getBlock() instanceof MalisisBlock);
 	}
 
 	public static ItemStack fromItemStacks(ItemStack is1, ItemStack is2)

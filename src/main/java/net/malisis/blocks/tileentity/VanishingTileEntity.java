@@ -34,6 +34,7 @@ import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.ItemUtils;
 import net.malisis.core.util.MBlockState;
 import net.malisis.core.util.Silenced;
+import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,12 +44,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -157,7 +158,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		{
 			copiedState = null;
 			copiedTileEntity = null;
-			worldObj.markBlockForUpdate(pos);
+			TileEntityUtils.notifyUpdate(this);
 			return true;
 		}
 
@@ -174,7 +175,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 				copiedState.getBlock().onBlockPlacedBy(proxy, pos, copiedState, p, itemStack);
 		});
 
-		worldObj.markBlockForUpdate(pos);
+		TileEntityUtils.notifyUpdate(this);
 		return true;
 	}
 
@@ -205,6 +206,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		this.inTransition = true;
 		//will probably break
 		worldObj.setBlockState(pos, getWorld().getBlockState(pos).withProperty(VanishingBlock.TRANSITION, true));
+
 		blockDrawn = false;
 
 		return true;
@@ -224,14 +226,14 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 				vibrating = true;
 				vibratingTimer = 0;
 				blockDrawn = false;
-				worldObj.markBlockForUpdate(pos);
+				TileEntityUtils.notifyUpdate(this);
 			}
 
 			if (vibrating && vibratingTimer++ >= maxVibratingTime)
 			{
 				vibrating = false;
 				vibratingTimer = 0;
-				worldObj.markBlockForUpdate(pos);
+				TileEntityUtils.notifyUpdate(this);
 			}
 
 		}
@@ -257,7 +259,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 				if (transitionTimer <= 0)
 				{
 					inTransition = false;
-					worldObj.markBlockForUpdate(pos);
+					TileEntityUtils.notifyUpdate(this);
 				}
 			}
 		}
@@ -319,11 +321,11 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeToNBT(nbt);
-		return new S35PacketUpdateTileEntity(pos, 0, nbt);
+		return new SPacketUpdateTileEntity(pos, 0, nbt);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		this.readFromNBT(packet.getNbtCompound());
 	}

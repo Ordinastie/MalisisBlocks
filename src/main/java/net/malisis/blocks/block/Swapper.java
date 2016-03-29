@@ -25,6 +25,7 @@
 package net.malisis.blocks.block;
 
 import net.malisis.blocks.MalisisBlocks;
+import net.malisis.blocks.MalisisBlocks.Sounds;
 import net.malisis.blocks.tileentity.SwapperTileEntity;
 import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.block.component.DirectionalComponent;
@@ -41,8 +42,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,7 +85,7 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 		boolean powered = world.isBlockIndirectlyGettingPowered(pos) != 0;
 		if (PowerComponent.isPowered(state) != powered)
 		{
-			world.playSoundEffect(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, MalisisBlocks.modid + ":portal", 0.3F, 0.5F);
+			world.playSound(null, pos, Sounds.portal, SoundCategory.BLOCKS, 0.3F, 0.5F);
 			if (world.isRemote)
 				return;
 			world.setBlockState(pos, state.withProperty(PowerComponent.getProperty(this), powered));

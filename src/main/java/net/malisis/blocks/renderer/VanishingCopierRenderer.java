@@ -27,7 +27,6 @@ package net.malisis.blocks.renderer;
 import java.util.Random;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocks.Items;
@@ -37,28 +36,25 @@ import net.malisis.core.renderer.element.Shape;
 import net.malisis.core.renderer.icon.MalisisIcon;
 import net.malisis.core.renderer.model.MalisisModel;
 import net.malisis.core.renderer.model.loader.TextureModelLoader;
+import net.malisis.core.util.TransformBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.model.TRSRTransformation;
 
 /**
  * @author Ordinastie
  *
  */
-@SuppressWarnings("deprecation")
 public class VanishingCopierRenderer extends DefaultRenderer.Item
 {
 
 	private AnimationRenderer ar = new AnimationRenderer();
 	private Shape shape;
 
-	private Matrix4f thirdPerson = new TRSRTransformation(new Vector3f(0.05F, 0.0F, -0.195F),
-			TRSRTransformation.quatFromYXZDegrees(new Vector3f(120, -145, 00)), new Vector3f(0.55F, 0.55F, 0.55F), null).getMatrix();
-	private Matrix4f firstPerson = new TRSRTransformation(new Vector3f(0, 0.280F, 0.14F),
-			TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 0)), new Vector3f(1.7F, 1.7F, 1.7F), null).getMatrix();
+	private Matrix4f thirdPersonRightHand = new TransformBuilder().translate(-.05F, .25F, .1F).rotate(45, -75, 0).scale(0.55F).get();
+	private Matrix4f thirdPersonLeftHand = new TransformBuilder().translate(-.05F, .25F, .1F).rotate(0, 105, 45).scale(0.55F).get();
 
 	@Override
 	public void initialize()
@@ -72,21 +68,22 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 	@Override
 	public Matrix4f getTransform(TransformType tranformType)
 	{
-		if (tranformType == TransformType.FIRST_PERSON)
-			return firstPerson;
-		else if (tranformType == TransformType.THIRD_PERSON)
-			return thirdPerson;
+		switch (tranformType)
+		{
+			case THIRD_PERSON_LEFT_HAND:
+				return thirdPersonLeftHand;
+			case THIRD_PERSON_RIGHT_HAND:
+				return thirdPersonRightHand;
+			default:
+				return DefaultRenderer.item.getTransform(tranformType);
+		}
 
-		return null;
 	}
 
 	@Override
 	public void render()
 	{
 		super.render();
-
-		//		if (tranformType != TransformType.FIRST_PERSON)
-		//			return;
 
 		ItemStack copiedStack = Items.vanishingCopierItem.getVanishingOptions(itemStack).getSlot().getItemStack();
 		if (copiedStack == null)
@@ -107,7 +104,7 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 				count = 2;
 		}
 
-		GlStateManager.translate(.2F, 0.75F, 0.5F);
+		GlStateManager.translate(.2F, 0.70F, 0.5F);
 		GlStateManager.scale(0.35F, 0.35F, 0.35F);
 		if (tranformType != TransformType.GUI)
 			GlStateManager.rotate(360 * ar.getElapsedTime() / 3000, 1, 1, 1);

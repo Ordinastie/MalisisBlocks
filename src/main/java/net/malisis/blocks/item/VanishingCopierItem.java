@@ -40,7 +40,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -73,18 +77,18 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 	}
 
 	@Override
-	public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player)
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand)
 	{
-		if (world.isRemote)
-			return itemStack;
+		if (world.isRemote || hand == EnumHand.OFF_HAND)
+			return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
 
 		MalisisInventory.open((EntityPlayerMP) player, this, itemStack);
 
-		return itemStack;
+		return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player)
+	public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player)
 	{
 		return true;
 	}
@@ -144,11 +148,5 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 		if (is == null)
 			return 1;
 		return 1 - ((double) is.stackSize / is.getMaxStackSize());
-	}
-
-	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
-	{
-		return oldStack == null || newStack == null || oldStack.getItem() != newStack.getItem();
 	}
 }

@@ -36,6 +36,7 @@ import net.malisis.core.MalisisCore;
 import net.malisis.core.configuration.Settings;
 import net.malisis.core.network.MalisisNetwork;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -114,6 +115,11 @@ public class MalisisBlocks implements IMalisisMod
 	public static class Items
 	{
 		public static VanishingCopierItem vanishingCopierItem;
+	}
+
+	public static class Sounds
+	{
+		public static SoundEvent portal;
 	}
 
 }

@@ -29,6 +29,7 @@ import java.util.Map;
 
 import net.malisis.blocks.block.VanishingBlock;
 import net.malisis.blocks.network.VanishingDiamondFrameMessage.DataType;
+import net.malisis.blocks.tileentity.VanishingTileEntity;
 import net.malisis.core.client.gui.MalisisGui;
 import net.malisis.core.inventory.IInventoryProvider.IDirectInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
@@ -38,8 +39,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
@@ -163,7 +164,7 @@ public class VanishingOptions implements IDirectInventoryProvider
 	public void readFromNBT(NBTTagCompound nbt)
 	{
 		inventory.readFromNBT(nbt);
-		duration = nbt.getInteger("Duration");
+		duration = nbt.hasKey("Duration") ? nbt.getInteger("Duration") : VanishingTileEntity.maxTransitionTime;
 
 		NBTTagList dirList = nbt.getTagList("Directions", NBT.TAG_COMPOUND);
 		for (int i = 0; i < dirList.tagCount(); ++i)

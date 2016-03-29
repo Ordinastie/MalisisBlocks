@@ -46,10 +46,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -86,7 +86,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		MixedBlockTileEntity te = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos);
 		if (te == null)
@@ -94,24 +94,25 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 		return MixedBlockBlockItem.fromTileEntity(te);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
-	public int getLightValue(IBlockAccess world, BlockPos pos)
+	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
 		MixedBlockTileEntity te = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos);
 		if (te == null || te.getState1() == null || te.getState2() == null)
 			return 0;
 
-		return Math.max(te.getState1().getBlock().getLightValue(), te.getState2().getBlock().getLightValue());
+		return Math.max(te.getState1().getlightValue(), te.getState2().getlightValue());
 	}
 
 	@Override
-	public boolean canProvidePower()
+	public boolean canProvidePower(IBlockState state)
 	{
 		return true;
 	}
 
 	@Override
-	public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
+	public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		MixedBlockTileEntity te = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos);
 		if (te == null || te.getState1() == null || te.getState2() == null)
@@ -121,7 +122,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean addHitEffects(World world, MovingObjectPosition target, EffectRenderer effectRenderer)
+	public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, EffectRenderer effectRenderer)
 	{
 		MixedBlockTileEntity te = (MixedBlockTileEntity) world.getTileEntity(target.getBlockPos());
 		if (te == null || te.getState1() == null || te.getState2() == null)
@@ -152,7 +153,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
+	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 	{
 		if (!player.capabilities.isCreativeMode)
 		{
@@ -160,7 +161,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 			if (te != null)
 				spawnAsEntity(world, pos, MixedBlockBlockItem.fromTileEntity(te));
 		}
-		return super.removedByPlayer(world, pos, player, willHarvest);
+		return super.removedByPlayer(state, world, pos, player, willHarvest);
 	}
 
 	@Override
@@ -170,26 +171,26 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean isOpaqueCube()
+	public boolean isOpaqueCube(IBlockState state)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean canRenderInLayer(EnumWorldBlockLayer layer)
+	public boolean canRenderInLayer(BlockRenderLayer layer)
 	{
-		return layer == EnumWorldBlockLayer.TRANSLUCENT;
+		return layer == BlockRenderLayer.TRANSLUCENT;
 	}
 
 	@Override
-	public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side)
+	public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		if (world.isAirBlock(pos))
 			return true;
 
-		IBlockState state = world.getBlockState(pos);
-		if (state.getBlock() != this && !(state.getBlock() instanceof BlockBreakable))
-			return !state.getBlock().isOpaqueCube();
+		IBlockState neighborState = world.getBlockState(pos.offset(side.getOpposite()));
+		if (neighborState.getBlock() != this && !(neighborState.getBlock() instanceof BlockBreakable))
+			return !neighborState.isOpaqueCube();
 
 		MixedBlockTileEntity current = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos.offset(side.getOpposite()));
 		return current != null && !isOpaque(world, pos) && current.isOpaque();

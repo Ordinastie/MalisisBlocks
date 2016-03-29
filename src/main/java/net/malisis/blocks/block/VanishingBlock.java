@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.malisis.blocks.MalisisBlocks;
+import net.malisis.blocks.MalisisBlocks.Sounds;
 import net.malisis.blocks.ProxyAccess;
 import net.malisis.blocks.item.VanishingBlockItem;
 import net.malisis.blocks.renderer.VanishingBlockRenderer;
@@ -35,6 +36,7 @@ import net.malisis.blocks.tileentity.VanishingTileEntity;
 import net.malisis.core.block.BoundingBoxType;
 import net.malisis.core.block.IBoundingBox;
 import net.malisis.core.block.MalisisBlock;
+import net.malisis.core.renderer.DefaultRenderer;
 import net.malisis.core.renderer.MalisisRendered;
 import net.malisis.core.renderer.icon.provider.PropertyEnumIconProvider;
 import net.malisis.core.util.AABBUtils;
@@ -45,7 +47,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -53,12 +55,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -68,7 +72,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author Ordinastie
  *
  */
-@MalisisRendered(VanishingBlockRenderer.class)
+@MalisisRendered(block = VanishingBlockRenderer.class, item = DefaultRenderer.Block.class)
 public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 {
 	public enum Type implements IMSerializable
@@ -112,9 +116,9 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	protected BlockState createBlockState()
+	protected BlockStateContainer createBlockState()
 	{
-		return new BlockState(this, TYPE, POWERED, TRANSITION);
+		return new BlockStateContainer(this, TYPE, POWERED, TRANSITION);
 	}
 
 	@Override
@@ -206,7 +210,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	// #region Events
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (te == null)
@@ -215,8 +219,9 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		if (player.isSneaking())
 			te.applyItemStack(null, player, side, hitX, hitY, hitZ);
 		else if (te.getCopiedState() == null)
-			te.applyItemStack(player.getHeldItem(), player, side, hitX, hitY, hitZ);
-		return true;
+			return te.applyItemStack(player.getHeldItem(hand), player, side, hitX, hitY, hitZ);
+
+		return false;
 	}
 
 	@Override
@@ -226,10 +231,10 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 			return;
 
 		boolean powered = world.isBlockIndirectlyGettingPowered(pos) != 0;
-		if (powered || (block.canProvidePower() && block != this))
+		if (powered || (block.canProvidePower(block.getDefaultState()) && block != this))
 		{
 			if (isPowered(world, pos) != powered)
-				world.playSoundEffect(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, MalisisBlocks.modid + ":portal", 0.3F, 0.5F);
+				world.playSound(null, pos, Sounds.portal, SoundCategory.BLOCKS, 0.3F, 0.5F);
 			this.setPowerState(world, pos, powered);
 		}
 	}
@@ -253,14 +258,17 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	// #end Events
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side)
+	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		return false;
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockAccess world, BlockPos pos, BoundingBoxType type)
+	public AxisAlignedBB getBoundingBox(IBlockAccess world, BlockPos pos, IBlockState state, BoundingBoxType type)
 	{
+		if (world == null)
+			return AABBUtils.identity();
+
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (te == null || te.isPowered() || te.isInTransition())
 			return null;
@@ -269,74 +277,71 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state)
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
-			return super.getCollisionBoundingBox(world, pos, state);
+			return super.getCollisionBoundingBox(state, world, pos);
 
-		return te.getCopiedState().getBlock().getCollisionBoundingBox((World) ProxyAccess.get(world), pos, state);
+		return te.getCopiedState().getBlock().getCollisionBoundingBox(te.getCopiedState(), (World) ProxyAccess.get(world), pos);
 
 	}
 
 	@Override
-	public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
 		{
-			super.addCollisionBoxesToList(world, pos, state, mask, list, collidingEntity);
+			super.addCollisionBoxToList(state, world, pos, mask, list, collidingEntity);
 			return;
 		}
 
-		te.getCopiedState().getBlock().addCollisionBoxesToList((World) ProxyAccess.get(world), pos, state, mask, list, collidingEntity);
+		te.getCopiedState().getBlock()
+				.addCollisionBoxToList(te.getCopiedState(), (World) ProxyAccess.get(world), pos, mask, list, collidingEntity);
 	}
 
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos)
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
-		{
-			super.setBlockBoundsBasedOnState(world, pos);
-			return;
-		}
+			return super.getBoundingBox(state, world, pos);
 
-		te.getCopiedState().getBlock().setBlockBoundsBasedOnState(ProxyAccess.get(world), pos);
+		return te.getCopiedState().getBlock().getBoundingBox(te.getCopiedState(), ProxyAccess.get(world), pos);
 
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos)
+	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
-			return super.getSelectedBoundingBox(world, pos);
+			return super.getSelectedBoundingBox(state, world, pos);
 
-		return te.getCopiedState().getBlock().getSelectedBoundingBox((World) ProxyAccess.get(world), pos);
+		return te.getCopiedState().getBlock().getSelectedBoundingBox(te.getCopiedState(), (World) ProxyAccess.get(world), pos);
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 src, Vec3 dest)
+	public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d src, Vec3d dest)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
-			return super.collisionRayTrace(world, pos, src, dest);
+			return super.collisionRayTrace(state, world, pos, src, dest);
 
 		World proxy = (World) ProxyAccess.get(world);
 		//prevent infinite recursion
 		if (proxy == world && te.getCopiedState().getBlock() instanceof IBoundingBox)
-			return super.collisionRayTrace(world, pos, src, dest);
+			return super.collisionRayTrace(state, world, pos, src, dest);
 
-		return te.getCopiedState().getBlock().collisionRayTrace(proxy, pos, src, dest);
+		return te.getCopiedState().getBlock().collisionRayTrace(te.getCopiedState(), proxy, pos, src, dest);
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
-	public Item getItem(World worldIn, BlockPos pos)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		// VanishingDiamondBlock has its own unused itemBlock, but we don't want it
-		return Item.getItemFromBlock(MalisisBlocks.Blocks.vanishingBlock);
+		return new ItemStack(Item.getItemFromBlock(MalisisBlocks.Blocks.vanishingBlock), 1, damageDropped(state));
 	}
 
 	@Override
@@ -353,25 +358,25 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean isNormalCube()
+	public boolean isNormalCube(IBlockState state)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean isOpaqueCube()
+	public boolean isOpaqueCube(IBlockState state)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube()
+	public boolean isFullCube(IBlockState state)
 	{
 		return false;
 	}
 
 	@Override
-	public float getAmbientOcclusionLightValue()
+	public float getAmbientOcclusionLightValue(IBlockState state)
 	{
 		return 0.9F;
 	}
@@ -395,7 +400,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean canRenderInLayer(EnumWorldBlockLayer layer)
+	public boolean canRenderInLayer(BlockRenderLayer layer)
 	{
 		return true;
 	}

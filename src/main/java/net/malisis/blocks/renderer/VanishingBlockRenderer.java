@@ -42,6 +42,7 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -117,17 +118,6 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 		if (tileEntity == null)
 			return;
 
-		//		if (!tileEntity.blockDrawn/* || (!tileEntity.isInTransition() && !tileEntity.isVibrating())*/)
-		//		{
-		//			if (!tileEntity.isPowered() && tileEntity.getCopiedTileEntity() != null)
-		//			{
-		//				clean();
-		//				TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity.getCopiedTileEntity(), partialTick, 0);
-		//			}
-		//			if (tileEntity.blockDrawn)
-		//				return;
-		//		}
-
 		enableBlending();
 
 		float fx = 0.0F;
@@ -168,6 +158,7 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 			return;
 		}
 
+		next(DefaultVertexFormats.BLOCK);
 		BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 		//wr.setVertexFormat(DefaultVertexFormats.BLOCK);
 		try
@@ -176,14 +167,11 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 			MalisisBlocksSettings.simpleMixedBlockRendering.set(true);
 
 			BlockPos translate = BlockPosUtils.chunkPosition(pos);
-			//GlStateManager.pushMatrix();
+			GlStateManager.pushMatrix();
 			GlStateManager.translate(0.5F, 0.5F, 0.5F);
 			GlStateManager.scale(scale, scale, scale);
 			if (tileEntity.getCopiedState().getBlock() instanceof MalisisBlock) //assume MalisisBlock is MalisisRendered
-			{
 				GlStateManager.translate(-translate.getX(), -translate.getY(), -translate.getZ());
-				//GlStateManager.translate(0, 0, 0);
-			}
 			else
 				GlStateManager.translate(-pos.getX(), -pos.getY(), -pos.getZ());
 			GlStateManager.translate(-0.5F, -0.5F, -0.5F);
@@ -224,7 +212,7 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 			if (!rendered)
 				drawShape(cube, rp);
 
-			//GlStateManager.popMatrix();
+			GlStateManager.popMatrix();
 
 			if (tileEntity.getCopiedTileEntity() != null)
 			{
@@ -237,6 +225,9 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 		}
 		catch (Exception e)
 		{
+			System.out.println("Fail to render " + tileEntity.getCopiedState());
+			e.printStackTrace();
+
 			drawShape(cube, rp);
 		}
 	}

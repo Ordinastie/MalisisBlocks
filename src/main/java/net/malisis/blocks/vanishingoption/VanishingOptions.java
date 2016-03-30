@@ -29,6 +29,7 @@ import java.util.Map;
 
 import net.malisis.blocks.block.VanishingBlock;
 import net.malisis.blocks.network.VanishingDiamondFrameMessage.DataType;
+import net.malisis.blocks.tileentity.VanishingTileEntity;
 import net.malisis.core.client.gui.MalisisGui;
 import net.malisis.core.inventory.IInventoryProvider.IDirectInventoryProvider;
 import net.malisis.core.inventory.MalisisInventory;
@@ -163,7 +164,7 @@ public class VanishingOptions implements IDirectInventoryProvider
 	public void readFromNBT(NBTTagCompound nbt)
 	{
 		inventory.readFromNBT(nbt);
-		duration = nbt.getInteger("Duration");
+		duration = nbt.hasKey("Duration") ? nbt.getInteger("Duration") : VanishingTileEntity.maxTransitionTime;
 
 		NBTTagList dirList = nbt.getTagList("Directions", NBT.TAG_COMPOUND);
 		for (int i = 0; i < dirList.tagCount(); ++i)

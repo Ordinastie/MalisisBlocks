@@ -215,8 +215,9 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		if (player.isSneaking())
 			te.applyItemStack(null, player, side, hitX, hitY, hitZ);
 		else if (te.getCopiedState() == null)
-			te.applyItemStack(player.getHeldItem(), player, side, hitX, hitY, hitZ);
-		return true;
+			return te.applyItemStack(player.getHeldItem(), player, side, hitX, hitY, hitZ);
+
+		return false;
 	}
 
 	@Override

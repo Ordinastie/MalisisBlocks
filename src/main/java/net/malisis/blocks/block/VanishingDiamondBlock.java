@@ -54,7 +54,7 @@ public class VanishingDiamondBlock extends VanishingBlock
 	{
 		super();
 		setName("vanishing_block_diamond");
-		setDefaultState(blockState.getBaseState().withProperty(TYPE, Type.DIAMOND));
+		setDefaultState(getDefaultState().withProperty(TYPE, Type.DIAMOND));
 	}
 
 	@Override

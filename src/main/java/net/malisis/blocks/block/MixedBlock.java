@@ -102,7 +102,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 		if (te == null || te.getState1() == null || te.getState2() == null)
 			return 0;
 
-		return Math.max(te.getState1().getlightValue(), te.getState2().getlightValue());
+		return Math.max(te.getState1().getLightValue(), te.getState2().getLightValue());
 	}
 
 	@Override

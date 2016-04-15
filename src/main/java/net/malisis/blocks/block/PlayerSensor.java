@@ -28,7 +28,7 @@ public class PlayerSensor extends MalisisBlock
 
 	public PlayerSensor()
 	{
-		super(Material.circuits);
+		super(Material.CIRCUITS);
 		setCreativeTab(MalisisBlocks.tab);
 		setName("player_sensor");
 		setTexture(MalisisBlocks.modid + ":blocks/player_sensor");

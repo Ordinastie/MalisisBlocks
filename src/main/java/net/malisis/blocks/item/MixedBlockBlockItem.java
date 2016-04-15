@@ -59,9 +59,9 @@ public class MixedBlockBlockItem extends ItemBlock
 	private static BiMap<Item, IBlockState> itemsAllowed = HashBiMap.create();
 	static
 	{
-		itemsAllowed.put(Items.ender_pearl, Blocks.portal.getDefaultState());
-		itemsAllowed.put(Items.water_bucket, Blocks.water.getDefaultState());
-		itemsAllowed.put(Items.lava_bucket, Blocks.lava.getDefaultState());
+		itemsAllowed.put(Items.ENDER_PEARL, Blocks.PORTAL.getDefaultState());
+		itemsAllowed.put(Items.WATER_BUCKET, Blocks.WATER.getDefaultState());
+		itemsAllowed.put(Items.LAVA_BUCKET, Blocks.LAVA.getDefaultState());
 	}
 
 	public MixedBlockBlockItem(Block block)
@@ -135,9 +135,9 @@ public class MixedBlockBlockItem extends ItemBlock
 	public static NBTTagCompound writeNBT(NBTTagCompound nbt, IBlockState state1, IBlockState state2)
 	{
 		if (state1 == null)
-			state1 = Blocks.stone.getDefaultState();
+			state1 = Blocks.STONE.getDefaultState();
 		if (state2 == null)
-			state2 = Blocks.stone.getDefaultState();
+			state2 = Blocks.STONE.getDefaultState();
 
 		MBlockState.toNBT(nbt, state1, "block1", "metadata1");
 		MBlockState.toNBT(nbt, state2, "block2", "metadata2");

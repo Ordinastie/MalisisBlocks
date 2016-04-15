@@ -78,7 +78,7 @@ public class SwapperTileEntity extends TileEntity
 
 			IBlockState stored = storedState.getLeft();
 			if (stored == null)
-				stored = Blocks.air.getDefaultState();
+				stored = Blocks.AIR.getDefaultState();
 			getWorld().markAndNotifyBlock(p, getWorld().getChunkFromBlockCoords(p), worldState.getLeft(), stored, 2);
 		}
 
@@ -96,7 +96,7 @@ public class SwapperTileEntity extends TileEntity
 	{
 		IBlockState worldState = getWorld().getBlockState(pos);
 
-		if (worldState.getBlock() == Blocks.bedrock)
+		if (worldState.getBlock() == Blocks.BEDROCK)
 			return Pair.of(null, null);
 
 		TileEntity te = getWorld().getTileEntity(pos);
@@ -114,11 +114,11 @@ public class SwapperTileEntity extends TileEntity
 
 	private void applyState(BlockPos pos, Pair<IBlockState, NBTTagCompound> state)
 	{
-		if (getWorld().getBlockState(pos).getBlock() == Blocks.bedrock)
+		if (getWorld().getBlockState(pos).getBlock() == Blocks.BEDROCK)
 			return;
 
 		clearWorldState(pos);
-		getWorld().setBlockState(pos, state.getLeft() != null ? state.getLeft() : Blocks.air.getDefaultState(), 0);
+		getWorld().setBlockState(pos, state.getLeft() != null ? state.getLeft() : Blocks.AIR.getDefaultState(), 0);
 		TileEntity te = getWorld().getTileEntity(pos);
 		if (te != null && state.getRight() != null)
 			te.readFromNBT(state.getRight());
@@ -133,7 +133,7 @@ public class SwapperTileEntity extends TileEntity
 	private void clearWorldState(BlockPos pos)
 	{
 		ExtendedBlockStorage ebs = getWorld().getChunkFromBlockCoords(pos).getBlockStorageArray()[pos.getY() >> 4];
-		ebs.set(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, Blocks.air.getDefaultState());
+		ebs.set(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, Blocks.AIR.getDefaultState());
 	}
 
 	public void dropStoredStates()
@@ -177,7 +177,7 @@ public class SwapperTileEntity extends TileEntity
 				{
 					int index = x + y * 3 + z * 9;
 					IBlockState state = states[x][y][z];
-					if (state != null && state.getBlock() != Blocks.air)
+					if (state != null && state.getBlock() != Blocks.AIR)
 					{
 						MBlockState.toNBT(tag, state, "block_" + index, "metadata_" + index);
 						tag.setTag("tileEntity_" + index, tileEntities[x][y][z]);

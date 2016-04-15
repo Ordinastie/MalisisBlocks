@@ -94,7 +94,7 @@ public class ProxyAccess
 	{
 		VanishingTileEntity te = getVanishingTileEntity(world, pos);
 		if (te != null)
-			return te.getCopiedState() != null ? te.getCopiedState() : Blocks.air.getDefaultState();
+			return te.getCopiedState() != null ? te.getCopiedState() : Blocks.AIR.getDefaultState();
 		return world.getBlockState(pos);
 	}
 

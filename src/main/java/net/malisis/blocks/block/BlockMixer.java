@@ -26,10 +26,11 @@ package net.malisis.blocks.block;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.tileentity.BlockMixerTileEntity;
+import net.malisis.core.MalisisCore;
 import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.inventory.MalisisInventory;
-import net.malisis.core.renderer.icon.provider.SidesIconProvider;
+import net.malisis.core.renderer.icon.provider.IIconProvider;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -42,28 +43,24 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockMixer extends MalisisBlock implements ITileEntityProvider
 {
 	public BlockMixer()
 	{
-		super(Material.iron);
+		super(Material.IRON);
 		setCreativeTab(MalisisBlocks.tab);
 		setHardness(3.0F);
 		setName("block_mixer");
 
 		addComponent(new DirectionalComponent());
-	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void createIconProvider(Object object)
-	{
-		SidesIconProvider ip = new SidesIconProvider(MalisisBlocks.modid + ":blocks/block_mixer_side");
-		ip.setSideIcon(EnumFacing.SOUTH, MalisisBlocks.modid + ":blocks/block_mixer");
-		iconProvider = ip;
+		if (MalisisCore.isClient())
+		{
+			addComponent(IIconProvider.create(MalisisBlocks.modid + ":blocks/", "block_mixer_side")
+										.withSide(EnumFacing.SOUTH, "block_mixer")
+										.build());
+		}
 	}
 
 	@Override

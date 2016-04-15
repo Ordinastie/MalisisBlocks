@@ -72,8 +72,8 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 
 	private final Random rand = new Random();
 
-	private Block[] excludes = new Block[] { MalisisBlocks.Blocks.vanishingBlock, Blocks.air, Blocks.ladder, Blocks.stone_button,
-			Blocks.wooden_button, Blocks.lever, Blocks.vine };
+	private Block[] excludes = new Block[] { MalisisBlocks.Blocks.vanishingBlock, Blocks.AIR, Blocks.LADDER, Blocks.STONE_BUTTON,
+			Blocks.WOODEN_BUTTON, Blocks.LEVER, Blocks.VINE };
 
 	public boolean blockDrawn = true;
 
@@ -248,8 +248,13 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 				if (transitionTimer >= getDuration())
 				{
 					inTransition = false;
-					worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 0.0F,
-							0.0F, 0.0F);
+					worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL,
+							pos.getX() + 0.5F,
+							pos.getY() + 0.5F,
+							pos.getZ() + 0.5F,
+							0.0F,
+							0.0F,
+							0.0F);
 				}
 			}
 			else

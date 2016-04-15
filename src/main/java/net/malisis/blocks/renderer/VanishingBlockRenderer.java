@@ -94,15 +94,19 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 		//wr.setVertexFormat(DefaultVertexFormats.BLOCK);
 		try
 		{
-			if (tileEntity.getCopiedState().getBlock().canRenderInLayer(getRenderLayer()))
+			if (tileEntity.getCopiedState().getBlock().canRenderInLayer(blockState, getRenderLayer()))
 			{
 				if (tileEntity.getCopiedState().getBlock() instanceof MalisisBlock)
 					vertexDrawn |= blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), buffer);
 				else
 				{
 					IBakedModel model = blockRenderer.getModelForState(tileEntity.getCopiedState());
-					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
-							tileEntity.getCopiedState(), pos, buffer, false);
+					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world),
+							model,
+							tileEntity.getCopiedState(),
+							pos,
+							buffer,
+							false);
 				}
 			}
 		}
@@ -188,7 +192,7 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 			GL14.glBlendColor(0, 0, 0, scale);
 			for (BlockRenderLayer layer : BlockRenderLayer.values())
 			{
-				if (!tileEntity.getCopiedState().getBlock().canRenderInLayer(layer))
+				if (!tileEntity.getCopiedState().getBlock().canRenderInLayer(blockState, layer))
 					continue;
 
 				ForgeHooksClient.setRenderLayer(layer);
@@ -202,8 +206,12 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 				else
 				{
 					IBakedModel model = blockRenderer.getModelForState(tileEntity.getCopiedState());
-					rendered |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
-							tileEntity.getCopiedState(), pos, buffer, false);
+					rendered |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world),
+							model,
+							tileEntity.getCopiedState(),
+							pos,
+							buffer,
+							false);
 				}
 
 				next();

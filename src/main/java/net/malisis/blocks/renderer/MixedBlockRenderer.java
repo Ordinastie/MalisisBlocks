@@ -47,6 +47,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
@@ -115,9 +116,9 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 	}
 
 	@Override
-	public Matrix4f getTransform(TransformType tranformType)
+	public Matrix4f getTransform(Item item, TransformType tranformType)
 	{
-		return DefaultRenderer.block.getTransform(tranformType);
+		return DefaultRenderer.block.getTransform(item, tranformType);
 	}
 
 	@Override
@@ -222,13 +223,14 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 
 	protected boolean shouldShadeFace(Boolean firstBlock)
 	{
-		if (block.canRenderInLayer(BlockRenderLayer.TRANSLUCENT) || block.canRenderInLayer(BlockRenderLayer.CUTOUT)
-				|| block.canRenderInLayer(BlockRenderLayer.CUTOUT_MIPPED))
+		if (block.canRenderInLayer(blockState, BlockRenderLayer.TRANSLUCENT) || block.canRenderInLayer(blockState, BlockRenderLayer.CUTOUT)
+				|| block.canRenderInLayer(blockState, BlockRenderLayer.CUTOUT_MIPPED))
 			return true;
 
 		IBlockState other = firstBlock ? state2 : state1;
-		if (other.getBlock().canRenderInLayer(BlockRenderLayer.TRANSLUCENT) || other.getBlock().canRenderInLayer(BlockRenderLayer.CUTOUT)
-				|| other.getBlock().canRenderInLayer(BlockRenderLayer.CUTOUT_MIPPED))
+		if (other.getBlock().canRenderInLayer(blockState, BlockRenderLayer.TRANSLUCENT)
+				|| other.getBlock().canRenderInLayer(blockState, BlockRenderLayer.CUTOUT)
+				|| other.getBlock().canRenderInLayer(blockState, BlockRenderLayer.CUTOUT_MIPPED))
 			return true;
 
 		return !firstBlock;

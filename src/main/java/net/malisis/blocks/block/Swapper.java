@@ -27,28 +27,23 @@ package net.malisis.blocks.block;
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocks.Sounds;
 import net.malisis.blocks.tileentity.SwapperTileEntity;
+import net.malisis.core.MalisisCore;
 import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.block.component.PowerComponent;
 import net.malisis.core.block.component.PowerComponent.Type;
-import net.malisis.core.renderer.icon.MalisisIcon;
-import net.malisis.core.renderer.icon.provider.IBlockIconProvider;
+import net.malisis.core.renderer.icon.provider.IIconProvider;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * @author Ordinastie
@@ -60,20 +55,20 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 
 	public Swapper()
 	{
-		super(Material.iron);
+		super(Material.IRON);
 		setCreativeTab(MalisisBlocks.tab);
 		setHardness(3.0F);
 		setName("swapper");
 
 		addComponent(new DirectionalComponent(DirectionalComponent.ALL));
 		addComponent(new PowerComponent(Type.REDSTONE));
-	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void createIconProvider(Object object)
-	{
-		iconProvider = new SwapperIconProvider();
+		if (MalisisCore.isClient())
+		{
+			addComponent(IIconProvider.create(MalisisBlocks.modid + ":blocks/", "swapper")
+										.withSide(EnumFacing.SOUTH, "swapper_top")
+										.build());
+		}
 	}
 
 	@Override
@@ -110,35 +105,35 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 		te.dropStoredStates();
 	}
 
-	@SideOnly(Side.CLIENT)
-	public static class SwapperIconProvider implements IBlockIconProvider
-	{
-		private MalisisIcon icon = new MalisisIcon(MalisisBlocks.modid + ":blocks/swapper");
-		private MalisisIcon top = new MalisisIcon(MalisisBlocks.modid + ":blocks/swapper_top");
-
-		@Override
-		public void registerIcons(TextureMap textureMap)
-		{
-			icon = icon.register(textureMap);
-			top = top.register(textureMap);
-		}
-
-		@Override
-		public MalisisIcon getIcon()
-		{
-			return icon;
-		}
-
-		@Override
-		public MalisisIcon getIcon(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
-		{
-			return side == EnumFacing.SOUTH ? top : icon;
-		}
-
-		@Override
-		public MalisisIcon getIcon(ItemStack itemStack, EnumFacing side)
-		{
-			return side == EnumFacing.UP ? top : icon;
-		}
-	}
+	//	@SideOnly(Side.CLIENT)
+	//	public static class SwapperIconProvider implements IBlockIconProvider
+	//	{
+	//		private Icon icon = new Icon(MalisisBlocks.modid + ":blocks/swapper");
+	//		private Icon top = new Icon(MalisisBlocks.modid + ":blocks/swapper_top");
+	//
+	//		@Override
+	//		public void registerIcons(TextureMap textureMap)
+	//		{
+	//			icon = icon.register(textureMap);
+	//			top = top.register(textureMap);
+	//		}
+	//
+	//		@Override
+	//		public Icon getIcon()
+	//		{
+	//			return icon;
+	//		}
+	//
+	//		@Override
+	//		public Icon getIcon(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
+	//		{
+	//			return side == EnumFacing.SOUTH ? top : icon;
+	//		}
+	//
+	//		@Override
+	//		public Icon getIcon(ItemStack itemStack, EnumFacing side)
+	//		{
+	//			return side == EnumFacing.UP ? top : icon;
+	//		}
+	//	}
 }

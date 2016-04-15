@@ -30,10 +30,12 @@ import javax.vecmath.Matrix4f;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocks.Items;
+import net.malisis.core.block.IComponent;
 import net.malisis.core.renderer.DefaultRenderer;
 import net.malisis.core.renderer.animation.AnimationRenderer;
 import net.malisis.core.renderer.element.Shape;
-import net.malisis.core.renderer.icon.MalisisIcon;
+import net.malisis.core.renderer.icon.Icon;
+import net.malisis.core.renderer.icon.provider.IIconProvider;
 import net.malisis.core.renderer.model.MalisisModel;
 import net.malisis.core.renderer.model.loader.TextureModelLoader;
 import net.malisis.core.util.TransformBuilder;
@@ -41,6 +43,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -60,13 +63,13 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 	public void initialize()
 	{
 		super.initialize();
-		MalisisIcon icon = MalisisBlocks.Items.vanishingCopierItem.getIconProvider().getIcon();
+		Icon icon = IComponent.getComponent(IIconProvider.class, MalisisBlocks.Items.vanishingCopierItem).getIcon();
 		MalisisModel model = new MalisisModel(new TextureModelLoader(icon));
 		shape = model.getShape("shape");
 	}
 
 	@Override
-	public Matrix4f getTransform(TransformType tranformType)
+	public Matrix4f getTransform(Item item, TransformType tranformType)
 	{
 		switch (tranformType)
 		{
@@ -75,7 +78,7 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 			case THIRD_PERSON_RIGHT_HAND:
 				return thirdPersonRightHand;
 			default:
-				return DefaultRenderer.item.getTransform(tranformType);
+				return DefaultRenderer.item.getTransform(item, tranformType);
 		}
 
 	}

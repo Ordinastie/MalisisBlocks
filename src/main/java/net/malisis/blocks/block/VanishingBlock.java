@@ -33,12 +33,14 @@ import net.malisis.blocks.ProxyAccess;
 import net.malisis.blocks.item.VanishingBlockItem;
 import net.malisis.blocks.renderer.VanishingBlockRenderer;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
+import net.malisis.core.MalisisCore;
 import net.malisis.core.block.BoundingBoxType;
 import net.malisis.core.block.IBoundingBox;
 import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.renderer.DefaultRenderer;
 import net.malisis.core.renderer.MalisisRendered;
-import net.malisis.core.renderer.icon.provider.PropertyEnumIconProvider;
+import net.malisis.core.renderer.icon.provider.IIconProvider;
+import net.malisis.core.renderer.icon.provider.IconProviderBuilder;
 import net.malisis.core.util.AABBUtils;
 import net.malisis.core.util.IMSerializable;
 import net.malisis.core.util.TileEntityUtils;
@@ -65,8 +67,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * @author Ordinastie
@@ -89,24 +89,23 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 
 	public VanishingBlock()
 	{
-		super(Material.wood);
+		super(Material.WOOD);
 		setName("vanishing_block");
 		setCreativeTab(MalisisBlocks.tab);
 		setHardness(0.5F);
 
-		setDefaultState(blockState.getBaseState().withProperty(TYPE, Type.WOOD).withProperty(POWERED, false)
-				.withProperty(TRANSITION, false));
-	}
+		setDefaultState(blockState.getBaseState()
+									.withProperty(TYPE, Type.WOOD)
+									.withProperty(POWERED, false)
+									.withProperty(TRANSITION, false));
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void createIconProvider(Object object)
-	{
-		PropertyEnumIconProvider<Type> ip = new PropertyEnumIconProvider<>(TYPE, Type.class, MalisisBlocks.modid
-				+ ":blocks/vanishing_block_wood");
-		for (Type type : Type.values())
-			ip.setIcon(type, MalisisBlocks.modid + ":blocks/vanishing_block_" + type.getName().toLowerCase());
-		iconProvider = ip;
+		if (MalisisCore.isClient())
+		{
+			IconProviderBuilder builder = IIconProvider.create(MalisisBlocks.modid + ":blocks/", "vanishing_block_wood").forProperty(TYPE);
+			for (Type type : Type.values())
+				builder.withValue(type, "vanishing_block_" + type.getName().toLowerCase());
+			addComponent(builder.build());
+		}
 	}
 
 	@Override
@@ -297,8 +296,9 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 			return;
 		}
 
-		te.getCopiedState().getBlock()
-				.addCollisionBoxToList(te.getCopiedState(), (World) ProxyAccess.get(world), pos, mask, list, collidingEntity);
+		te.getCopiedState()
+			.getBlock()
+			.addCollisionBoxToList(te.getCopiedState(), (World) ProxyAccess.get(world), pos, mask, list, collidingEntity);
 	}
 
 	@Override

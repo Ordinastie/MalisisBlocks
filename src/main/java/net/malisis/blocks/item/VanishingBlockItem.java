@@ -26,16 +26,16 @@ package net.malisis.blocks.item;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.block.VanishingBlock;
+import net.malisis.core.item.MalisisItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class VanishingBlockItem extends ItemBlock
+public class VanishingBlockItem extends MalisisItemBlock
 {
 	String[] names = { "wood", "iron", "gold", "diamond" };
 

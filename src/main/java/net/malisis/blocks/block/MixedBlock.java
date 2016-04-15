@@ -62,7 +62,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 {
 	public MixedBlock()
 	{
-		super(Material.rock);
+		super(Material.ROCK);
 		setName("mixed_block");
 		setHardness(0.7F);
 
@@ -118,7 +118,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 		if (te == null || te.getState1() == null || te.getState2() == null)
 			return 0;
 
-		return te.getState1().getBlock() == Blocks.redstone_block || te.getState2().getBlock() == Blocks.redstone_block ? 15 : 0;
+		return te.getState1().getBlock() == Blocks.REDSTONE_BLOCK || te.getState2().getBlock() == Blocks.REDSTONE_BLOCK ? 15 : 0;
 	}
 
 	@Override

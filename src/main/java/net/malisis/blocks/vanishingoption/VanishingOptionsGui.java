@@ -93,12 +93,16 @@ public class VanishingOptionsGui extends MalisisGui
 			cb.setPosition(2, y).setChecked(state.shouldPropagate).register(this);
 			cb.attachData(Pair.of(dir, DataType.PROPAGATION));
 
-			UITextField textField = new UITextField(this, "" + state.delay).setSize(27, 0).setPosition(55, y)
-					.setDisabled(!state.shouldPropagate).register(this);
+			UITextField textField = new UITextField(this, "" + state.delay).setSize(27, 0)
+																			.setPosition(55, y)
+																			.setDisabled(!state.shouldPropagate)
+																			.register(this);
 			textField.attachData(Pair.of(dir, DataType.DELAY));
 
-			UICheckBox invCb = new UICheckBox(this).setPosition(105, y).setDisabled(!state.shouldPropagate).setChecked(state.inversed)
-					.register(this);
+			UICheckBox invCb = new UICheckBox(this).setPosition(105, y)
+													.setDisabled(!state.shouldPropagate)
+													.setChecked(state.inversed)
+													.register(this);
 			invCb.attachData(Pair.of(dir, DataType.INVERSED));
 
 			window.add(cb);
@@ -112,8 +116,9 @@ public class VanishingOptionsGui extends MalisisGui
 
 		UIContainer<?> cont = new UIContainer<>(this, 50, 60).setPosition(0, 40, Anchor.RIGHT);
 
-		duration = new UITextField(this, "" + vanishingOptions.getDuration()).setSize(30, 0).setPosition(0, 10, Anchor.CENTER)
-				.register(this);
+		duration = new UITextField(this, "" + vanishingOptions.getDuration()).setSize(30, 0)
+																				.setPosition(0, 10, Anchor.CENTER)
+																				.register(this);
 		duration.attachData(Pair.of(null, DataType.DURATION));
 		cont.add(new UILabel(this, "Duration").setPosition(0, 0, Anchor.CENTER));
 		cont.add(duration);
@@ -140,7 +145,7 @@ public class VanishingOptionsGui extends MalisisGui
 		@SuppressWarnings("unchecked")
 		Pair<EnumFacing, DataType> data = (Pair<EnumFacing, DataType>) event.getComponent().getData();
 		int time = event.getComponent() instanceof UITextField ? NumberUtils.toInt((String) event.getNewValue()) : 0;
-		boolean checked = event.getComponent() instanceof UICheckBox ? (boolean) event.getNewValue() : false;
+		boolean checked = event.getComponent() instanceof UICheckBox ? (Boolean) event.getNewValue() : false;
 
 		vanishingOptions.set(data.getLeft(), data.getRight(), time, checked);
 

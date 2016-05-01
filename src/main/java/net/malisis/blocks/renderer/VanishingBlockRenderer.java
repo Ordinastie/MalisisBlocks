@@ -53,7 +53,6 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 {
 	private Shape cube = new Cube();
 	public Random rand = new Random();
-	private VanishingTileEntity tileEntity;
 
 	public VanishingBlockRenderer()
 	{
@@ -64,19 +63,23 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 	public void render()
 	{
 		cube.resetState();
-		tileEntity = super.tileEntity;
-		if (renderType == RenderType.TILE_ENTITY)
-			renderVanishingTileEntity();
-		else if (renderType == RenderType.ITEM)
+
+		if (renderType == RenderType.ITEM)
 		{
 			RenderParameters rp = new RenderParameters();
 			rp.useBlockBounds.set(false);
 			drawShape(cube, rp);
 		}
-		else if (renderType == RenderType.BLOCK)
-		{
+
+		if (tileEntity == null)
+			return;
+
+		if (renderType == RenderType.TILE_ENTITY)
+			renderVanishingTileEntity();
+
+		if (renderType == RenderType.BLOCK)
 			renderVanishingBlock();
-		}
+
 	}
 
 	private void renderVanishingBlock()
@@ -106,8 +109,12 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 				else
 				{
 					IBakedModel model = blockRenderer.getModelFromBlockState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
-					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
-							tileEntity.getCopiedState(), pos, wr, false);
+					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world),
+							model,
+							tileEntity.getCopiedState(),
+							pos,
+							wr,
+							false);
 				}
 			}
 		}
@@ -209,8 +216,12 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 					else
 					{
 						IBakedModel model = blockRenderer.getModelFromBlockState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
-						rendered |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world), model,
-								tileEntity.getCopiedState(), pos, wr, false);
+						rendered |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world),
+								model,
+								tileEntity.getCopiedState(),
+								pos,
+								wr,
+								false);
 					}
 
 					next();

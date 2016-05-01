@@ -54,7 +54,6 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 {
 	private Shape cube = new Cube();
 	public Random rand = new Random();
-	private VanishingTileEntity tileEntity;
 
 	public VanishingBlockRenderer()
 	{
@@ -64,14 +63,14 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 	@Override
 	public void render()
 	{
+		if (tileEntity == null)
+			return;
+
 		cube.resetState();
-		tileEntity = super.tileEntity;
 		if (renderType == RenderType.TILE_ENTITY)
 			renderVanishingTileEntity();
-		else if (renderType == RenderType.BLOCK)
-		{
+		if (renderType == RenderType.BLOCK)
 			renderVanishingBlock();
-		}
 	}
 
 	private void renderVanishingBlock()

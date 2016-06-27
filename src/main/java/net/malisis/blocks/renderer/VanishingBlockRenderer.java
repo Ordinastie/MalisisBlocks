@@ -43,6 +43,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -223,8 +224,9 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 
 			if (tileEntity.getCopiedTileEntity() != null)
 			{
+				TileEntity te = tileEntity.getCopiedTileEntity();
 				clean();
-				TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity.getCopiedTileEntity(), partialTick, 0);
+				TileEntityRendererDispatcher.instance.renderTileEntity(te, partialTick, 0);
 			}
 
 			MalisisBlocksSettings.simpleMixedBlockRendering.set(smbr);

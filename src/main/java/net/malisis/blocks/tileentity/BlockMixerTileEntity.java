@@ -91,11 +91,12 @@ public class BlockMixerTileEntity extends TileEntity implements IDirectInventory
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tagCompound)
+	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound)
 	{
 		super.writeToNBT(tagCompound);
 		tagCompound.setInteger("mixTimer", mixTimer);
 		inventory.writeToNBT(tagCompound);
+		return tagCompound;
 	}
 
 	@Override

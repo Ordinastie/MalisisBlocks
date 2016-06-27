@@ -33,8 +33,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -165,7 +163,7 @@ public class SwapperTileEntity extends TileEntity
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag)
+	public NBTTagCompound writeToNBT(NBTTagCompound tag)
 	{
 		super.writeToNBT(tag);
 
@@ -185,10 +183,12 @@ public class SwapperTileEntity extends TileEntity
 				}
 			}
 		}
+
+		return tag;
 	}
 
 	@Override
-	public Packet<INetHandlerPlayClient> getDescriptionPacket()
+	public SPacketUpdateTileEntity getUpdatePacket()
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeToNBT(nbt);

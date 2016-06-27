@@ -73,7 +73,7 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block)
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
 	{
 		if (world.isRemote)
 			return;

@@ -166,10 +166,11 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt)
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
 	{
 		super.writeToNBT(nbt);
 		vanishingOptions.writeToNBT(nbt);
+		return nbt;
 	}
 
 	@Override

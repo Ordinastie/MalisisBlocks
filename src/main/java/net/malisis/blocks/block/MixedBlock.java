@@ -39,7 +39,7 @@ import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -122,26 +122,26 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, EffectRenderer effectRenderer)
+	public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, ParticleManager manager)
 	{
 		MixedBlockTileEntity te = (MixedBlockTileEntity) world.getTileEntity(target.getBlockPos());
 		if (te == null || te.getState1() == null || te.getState2() == null)
 			return true;
 
-		EntityUtils.addHitEffects(world, target, effectRenderer, te.getState1(), te.getState2());
+		EntityUtils.addHitEffects(world, target, manager, te.getState1(), te.getState2());
 
 		return true;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean addDestroyEffects(World world, BlockPos pos, EffectRenderer effectRenderer)
+	public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager)
 	{
 		MixedBlockTileEntity te = (MixedBlockTileEntity) world.getTileEntity(pos);
 		if (te == null || te.getState1() == null || te.getState2() == null)
 			return true;
 
-		EntityUtils.addDestroyEffects(world, pos, effectRenderer, te.getState1(), te.getState2());
+		EntityUtils.addDestroyEffects(world, pos, manager, te.getState1(), te.getState2());
 
 		return true;
 	}

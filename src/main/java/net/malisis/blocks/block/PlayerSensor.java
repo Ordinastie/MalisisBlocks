@@ -80,7 +80,7 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock)
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
 	{
 		EnumFacing dir = DirectionalComponent.getDirection(world, pos).getOpposite();
 		if (!world.isSideSolid(pos.offset(dir), dir))

@@ -120,12 +120,6 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		return new BlockStateContainer(this, TYPE, POWERED, TRANSITION);
 	}
 
-	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
-	{
-		return super.getActualState(state, worldIn, pos);
-	}
-
 	/**
 	 * Check if block at x, y, z is a powered VanishingBlock
 	 */
@@ -224,13 +218,13 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block)
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block)
 	{
 		if (world.isRemote)
 			return;
 
 		boolean powered = world.isBlockIndirectlyGettingPowered(pos) != 0;
-		if (powered || (block.canProvidePower(block.getDefaultState()) && block != this))
+		if (powered || (block.getDefaultState().canProvidePower() && block != this))
 		{
 			if (isPowered(world, pos) != powered)
 				world.playSound(null, pos, Sounds.portal, SoundCategory.BLOCKS, 0.3F, 0.5F);
@@ -276,13 +270,14 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
 			return super.getCollisionBoundingBox(state, world, pos);
 
-		return te.getCopiedState().getBlock().getCollisionBoundingBox(te.getCopiedState(), (World) ProxyAccess.get(world), pos);
+		return te.getCopiedState().getCollisionBoundingBox((World) ProxyAccess.get(world), pos);
 
 	}
 
@@ -296,19 +291,18 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 			return;
 		}
 
-		te.getCopiedState()
-			.getBlock()
-			.addCollisionBoxToList(te.getCopiedState(), (World) ProxyAccess.get(world), pos, mask, list, collidingEntity);
+		te.getCopiedState().addCollisionBoxToList((World) ProxyAccess.get(world), pos, mask, list, collidingEntity);
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
 			return super.getBoundingBox(state, world, pos);
 
-		return te.getCopiedState().getBlock().getBoundingBox(te.getCopiedState(), ProxyAccess.get(world), pos);
+		return te.getCopiedState().getBoundingBox(ProxyAccess.get(world), pos);
 
 	}
 
@@ -319,7 +313,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		if (!shouldDefer(te))
 			return super.getSelectedBoundingBox(state, world, pos);
 
-		return te.getCopiedState().getBlock().getSelectedBoundingBox(te.getCopiedState(), (World) ProxyAccess.get(world), pos);
+		return te.getCopiedState().getSelectedBoundingBox((World) ProxyAccess.get(world), pos);
 	}
 
 	@Override
@@ -334,7 +328,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		if (proxy == world && te.getCopiedState().getBlock() instanceof IBoundingBox)
 			return super.collisionRayTrace(state, world, pos, src, dest);
 
-		return te.getCopiedState().getBlock().collisionRayTrace(te.getCopiedState(), proxy, pos, src, dest);
+		return te.getCopiedState().collisionRayTrace(proxy, pos, src, dest);
 	}
 
 	@Override

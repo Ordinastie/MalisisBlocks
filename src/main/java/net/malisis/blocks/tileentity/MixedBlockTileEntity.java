@@ -6,8 +6,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -52,14 +50,15 @@ public class MixedBlockTileEntity extends TileEntity
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt)
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
 	{
 		super.writeToNBT(nbt);
 		MixedBlockBlockItem.writeNBT(nbt, state1, state2);
+		return nbt;
 	}
 
 	@Override
-	public Packet<INetHandlerPlayClient> getDescriptionPacket()
+	public SPacketUpdateTileEntity getUpdatePacket()
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeToNBT(nbt);

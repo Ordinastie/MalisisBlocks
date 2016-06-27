@@ -42,8 +42,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -271,6 +269,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void readFromNBT(NBTTagCompound nbt)
 	{
 		super.readFromNBT(nbt);
@@ -299,7 +298,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt)
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
 	{
 		super.writeToNBT(nbt);
 		if (copiedState != null)
@@ -319,10 +318,11 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		nbt.setInteger("TransitionTimer", transitionTimer);
 		nbt.setBoolean("Vibrating", vibrating);
 		nbt.setInteger("VibratingTimer", vibratingTimer);
+		return nbt;
 	}
 
 	@Override
-	public Packet<INetHandlerPlayClient> getDescriptionPacket()
+	public SPacketUpdateTileEntity getUpdatePacket()
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeToNBT(nbt);

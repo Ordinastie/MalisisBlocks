@@ -30,6 +30,7 @@ import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.ProxyAccess;
 import net.malisis.blocks.block.VanishingBlock;
+import net.malisis.core.MalisisCore;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.ItemUtils;
 import net.malisis.core.util.MBlockState;
@@ -133,7 +134,9 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 
 	public boolean applyItemStack(ItemStack itemStack, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		ItemStack is = ItemUtils.getItemStackFromState(getCopiedState());
+		ItemStack is = null;
+		if (copiedState != null)
+			is = copiedState.getBlock().getPickBlock(copiedState, null, ((World) ProxyAccess.get(worldObj)), pos, player);
 
 		if (!setBlockState(itemStack, player, side, hitX, hitY, hitZ))
 			return false;
@@ -272,6 +275,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	@SuppressWarnings("deprecation")
 	public void readFromNBT(NBTTagCompound nbt)
 	{
+		MalisisCore.message("read");
 		super.readFromNBT(nbt);
 		if (nbt.hasKey("BlockID"))
 		{
@@ -319,6 +323,12 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		nbt.setBoolean("Vibrating", vibrating);
 		nbt.setInteger("VibratingTimer", vibratingTimer);
 		return nbt;
+	}
+
+	@Override
+	public NBTTagCompound getUpdateTag()
+	{
+		return writeToNBT(new NBTTagCompound());
 	}
 
 	@Override

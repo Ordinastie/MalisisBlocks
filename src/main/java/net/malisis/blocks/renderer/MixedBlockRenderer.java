@@ -248,6 +248,7 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 		if (p.direction.get() == null)
 			return true;
 
-		return mixedBlockState.shouldSideBeRendered(world, pos.offset(p.direction.get()), p.direction.get());
+		return mixedBlockState.shouldSideBeRendered(world, pos, p.direction.get());
 	}
+
 }

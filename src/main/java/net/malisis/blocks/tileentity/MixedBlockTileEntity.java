@@ -5,8 +5,6 @@ import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -37,6 +35,8 @@ public class MixedBlockTileEntity extends TileEntity
 
 	public boolean isOpaque()
 	{
+		if (state1 == null)
+			return true;
 		return !(state1.getBlock() instanceof BlockBreakable || state2.getBlock() instanceof BlockBreakable);
 	}
 
@@ -58,17 +58,9 @@ public class MixedBlockTileEntity extends TileEntity
 	}
 
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket()
+	public NBTTagCompound getUpdateTag()
 	{
-		NBTTagCompound nbt = new NBTTagCompound();
-		this.writeToNBT(nbt);
-		return new SPacketUpdateTileEntity(pos, 0, nbt);
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
-	{
-		this.readFromNBT(packet.getNbtCompound());
+		return writeToNBT(new NBTTagCompound());
 	}
 
 	@Override

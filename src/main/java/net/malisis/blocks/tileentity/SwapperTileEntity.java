@@ -24,6 +24,7 @@
 
 package net.malisis.blocks.tileentity;
 
+import net.malisis.blocks.network.SwapperMessage;
 import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.util.BlockPosUtils;
 import net.malisis.core.util.EntityUtils;
@@ -61,7 +62,7 @@ public class SwapperTileEntity extends TileEntity
 	public void swap()
 	{
 		AxisAlignedBB aabb = getAABB();
-
+		//Set<Chunk> chunks = Sets.newHashSet();
 		for (BlockPos p : BlockPosUtils.getAllInBox(aabb))
 		{
 			int x = (int) (p.getX() - aabb.minX);
@@ -77,9 +78,10 @@ public class SwapperTileEntity extends TileEntity
 			IBlockState stored = storedState.getLeft();
 			if (stored == null)
 				stored = Blocks.AIR.getDefaultState();
-			getWorld().markAndNotifyBlock(p, getWorld().getChunkFromBlockCoords(p), worldState.getLeft(), stored, 2);
+			getWorld().markAndNotifyBlock(p, getWorld().getChunkFromBlockCoords(p), worldState.getLeft(), stored, 3);
+			//			if (storedState.getRight() != null)
+			//				chunks.add(getWorld().getChunkFromBlockCoords(p));
 		}
-
 	}
 
 	private AxisAlignedBB getAABB()
@@ -116,10 +118,13 @@ public class SwapperTileEntity extends TileEntity
 			return;
 
 		clearWorldState(pos);
-		getWorld().setBlockState(pos, state.getLeft() != null ? state.getLeft() : Blocks.AIR.getDefaultState(), 0);
+		getWorld().setBlockState(pos, state.getLeft() != null ? state.getLeft() : Blocks.AIR.getDefaultState(), 3);
 		TileEntity te = getWorld().getTileEntity(pos);
 		if (te != null && state.getRight() != null)
+		{
 			te.readFromNBT(state.getRight());
+			SwapperMessage.sendTileEntityTag(te);
+		}
 	}
 
 	private void storeState(int x, int y, int z, Pair<IBlockState, NBTTagCompound> state)
@@ -132,6 +137,7 @@ public class SwapperTileEntity extends TileEntity
 	{
 		ExtendedBlockStorage ebs = getWorld().getChunkFromBlockCoords(pos).getBlockStorageArray()[pos.getY() >> 4];
 		ebs.set(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, Blocks.AIR.getDefaultState());
+		getWorld().removeTileEntity(pos);
 	}
 
 	public void dropStoredStates()
@@ -174,11 +180,13 @@ public class SwapperTileEntity extends TileEntity
 				for (int z = 0; z <= 2; z++)
 				{
 					int index = x + y * 3 + z * 9;
-					IBlockState state = states[x][y][z];
+					Pair<IBlockState, NBTTagCompound> storedState = getStoredState(x, y, z);
+					IBlockState state = storedState.getLeft();
 					if (state != null && state.getBlock() != Blocks.AIR)
 					{
 						MBlockState.toNBT(tag, state, "block_" + index, "metadata_" + index);
-						tag.setTag("tileEntity_" + index, tileEntities[x][y][z]);
+						if (storedState.getRight() != null)
+							tag.setTag("tileEntity_" + index, storedState.getRight());
 					}
 				}
 			}
@@ -199,8 +207,10 @@ public class SwapperTileEntity extends TileEntity
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
 	{
 		this.readFromNBT(packet.getNbtCompound());
+		AxisAlignedBB aabb = getAABB();
 		//force rerender of the block on the client
-		getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
+		getWorld().markBlockRangeForRenderUpdate(new BlockPos(aabb.minX, aabb.minY, aabb.minZ),
+				new BlockPos(aabb.maxX, aabb.maxY, aabb.maxZ));
 	}
 
 	@Override

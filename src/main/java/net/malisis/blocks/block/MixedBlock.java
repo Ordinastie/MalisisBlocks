@@ -122,6 +122,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, ParticleManager manager)
 	{
 		MixedBlockTileEntity te = (MixedBlockTileEntity) world.getTileEntity(target.getBlockPos());
@@ -133,8 +134,8 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 		return true;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
+	@SideOnly(Side.CLIENT)
 	public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager)
 	{
 		MixedBlockTileEntity te = (MixedBlockTileEntity) world.getTileEntity(pos);
@@ -185,15 +186,21 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	@Override
 	public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
-		if (world.isAirBlock(pos))
+		IBlockState neighborState = world.getBlockState(pos.offset(side));
+		if (neighborState.getMaterial() == Material.AIR)
 			return true;
 
-		IBlockState neighborState = world.getBlockState(pos.offset(side.getOpposite()));
 		if (neighborState.getBlock() != this && !(neighborState.getBlock() instanceof BlockBreakable))
 			return !neighborState.isOpaqueCube();
 
-		MixedBlockTileEntity current = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos.offset(side.getOpposite()));
+		MixedBlockTileEntity current = TileEntityUtils.getTileEntity(MixedBlockTileEntity.class, world, pos);
 		return current != null && !isOpaque(world, pos) && current.isOpaque();
+	}
+
+	@Override
+	public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
+	{
+		return isOpaque(world, pos);
 	}
 
 	public static boolean isOpaque(IBlockAccess world, BlockPos pos)

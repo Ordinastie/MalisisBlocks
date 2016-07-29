@@ -30,7 +30,6 @@ import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.ProxyAccess;
 import net.malisis.blocks.block.VanishingBlock;
-import net.malisis.core.MalisisCore;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.ItemUtils;
 import net.malisis.core.util.MBlockState;
@@ -275,7 +274,6 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	@SuppressWarnings("deprecation")
 	public void readFromNBT(NBTTagCompound nbt)
 	{
-		MalisisCore.message("read");
 		super.readFromNBT(nbt);
 		if (nbt.hasKey("BlockID"))
 		{

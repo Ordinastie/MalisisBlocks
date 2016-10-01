@@ -39,7 +39,7 @@ import net.malisis.blocks.tileentity.MixedBlockTileEntity;
 import net.malisis.blocks.tileentity.SwapperTileEntity;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
-import net.malisis.core.MalisisRegistry;
+import net.malisis.core.registry.MalisisRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

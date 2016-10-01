@@ -178,6 +178,12 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
+	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side)
+	{
+		return true;
+	}
+
+	@Override
 	public boolean canRenderInLayer(BlockRenderLayer layer)
 	{
 		return layer == BlockRenderLayer.TRANSLUCENT;

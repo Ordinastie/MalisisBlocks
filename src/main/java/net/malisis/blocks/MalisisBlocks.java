@@ -46,7 +46,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  * @author Ordinastie
  *
  */
-@Mod(modid = MalisisBlocks.modid, name = MalisisBlocks.modname, version = MalisisBlocks.version, dependencies = "required-after:malisiscore")
+@Mod(modid = MalisisBlocks.modid, name = MalisisBlocks.modname, version = MalisisBlocks.version, dependencies = "required-after:malisiscore", acceptedMinecraftVersions = "[1.9.4,1.10.2]")
 public class MalisisBlocks implements IMalisisMod
 {
 

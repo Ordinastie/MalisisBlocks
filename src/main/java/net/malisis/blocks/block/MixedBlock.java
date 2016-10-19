@@ -82,6 +82,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 		if (te == null)
 			return;
 		te.set(itemStack);
+		world.checkLight(pos);
 		world.notifyBlockOfStateChange(pos, this);
 	}
 

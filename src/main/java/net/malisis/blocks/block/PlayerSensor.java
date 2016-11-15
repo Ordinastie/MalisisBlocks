@@ -7,7 +7,7 @@ import net.malisis.blocks.MalisisBlocks;
 import net.malisis.core.block.BoundingBoxType;
 import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.block.component.DirectionalComponent;
-import net.malisis.core.block.component.DirectionalComponent.Placement;
+import net.malisis.core.block.component.DirectionalComponent.IPlacement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -33,7 +33,7 @@ public class PlayerSensor extends MalisisBlock
 		setName("player_sensor");
 		setTexture(MalisisBlocks.modid + ":blocks/player_sensor");
 
-		addComponent(new DirectionalComponent(DirectionalComponent.ALL, Placement.BLOCKSIDE));
+		addComponent(new DirectionalComponent(DirectionalComponent.ALL, IPlacement.BLOCKSIDE));
 
 		setDefaultState(getDefaultState().withProperty(POWERED, false));
 	}

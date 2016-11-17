@@ -224,6 +224,9 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 				next();
 			}
 
+			//set it back to null for items rendering
+			ForgeHooksClient.setRenderLayer(null);
+
 			if (!rendered)
 				drawShape(cube, rp);
 
@@ -246,5 +249,6 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 
 			drawShape(cube, rp);
 		}
+
 	}
 }

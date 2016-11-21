@@ -50,7 +50,10 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 {
 	public static enum DataType
 	{
-		PROPAGATION, DELAY, INVERSED, DURATION;
+		PROPAGATION,
+		DELAY,
+		INVERSED,
+		DURATION;
 	}
 
 	public VanishingDiamondFrameMessage()
@@ -66,7 +69,7 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 		if (message.isTileEntity)
 		{
 
-			VanishingDiamondTileEntity te = TileEntityUtils.getTileEntity(VanishingDiamondTileEntity.class, player.worldObj, message.pos);
+			VanishingDiamondTileEntity te = TileEntityUtils.getTileEntity(VanishingDiamondTileEntity.class, player.world, message.pos);
 			if (te == null)
 				return;
 			vanishingOptions = te.getVanishingOptions();

@@ -126,7 +126,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 			return false;
 
 		changedPowerStateTimer = 0;
-		vanishingOptions.setPowerState(worldObj, pos, changedPowerStateTimer, powered);
+		vanishingOptions.setPowerState(world, pos, changedPowerStateTimer, powered);
 		return true;
 	}
 
@@ -147,7 +147,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 	public void update()
 	{
 		changedPowerStateTimer++;
-		vanishingOptions.propagateState(worldObj, pos, changedPowerStateTimer, powered);
+		vanishingOptions.propagateState(world, pos, changedPowerStateTimer, powered);
 		super.update();
 	}
 

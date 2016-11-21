@@ -83,6 +83,7 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 		}
 
 		tileEntity.blockDrawn = true;
+		//MalisisCore.message("blockDrawn > true (renderer)");
 
 		if (tileEntity.getCopiedState() == null)
 		{

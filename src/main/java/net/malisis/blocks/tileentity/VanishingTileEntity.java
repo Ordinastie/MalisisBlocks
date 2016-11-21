@@ -135,12 +135,12 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	{
 		ItemStack is = null;
 		if (copiedState != null)
-			is = copiedState.getBlock().getPickBlock(copiedState, null, ((World) ProxyAccess.get(worldObj)), pos, player);
+			is = copiedState.getBlock().getPickBlock(copiedState, null, ((World) ProxyAccess.get(world)), pos, player);
 
 		if (!setBlockState(itemStack, player, side, hitX, hitY, hitZ))
 			return false;
 
-		EntityUtils.spawnEjectedItem(worldObj, pos, is);
+		EntityUtils.spawnEjectedItem(world, pos, is);
 
 		if (itemStack == null)
 			return true;
@@ -148,7 +148,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		if (!player.capabilities.isCreativeMode)
 			itemStack.stackSize--;
 
-		((World) ProxyAccess.get(worldObj)).notifyNeighborsOfStateChange(pos, getCopiedState().getBlock());
+		((World) ProxyAccess.get(world)).notifyNeighborsOfStateChange(pos, getCopiedState().getBlock());
 		return true;
 	}
 
@@ -170,7 +170,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		copiedState = state;
 		initCopiedTileEntity();
 		Silenced.exec(() -> {
-			copiedState = state.getBlock().onBlockPlaced(proxy, pos, side, hitX, hitY, hitZ, itemStack.getMetadata(), p);
+			copiedState = state.getBlock().getStateForPlacement(proxy, pos, side, hitX, hitY, hitZ, itemStack.getMetadata(), p, itemStack);
 			if (p != null)
 				copiedState.getBlock().onBlockPlacedBy(proxy, pos, copiedState, p, itemStack);
 		});
@@ -184,7 +184,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		copiedTileEntity = copiedState.getBlock().createTileEntity(getWorld(), copiedState);
 		if (copiedTileEntity != null)
 		{
-			copiedTileEntity.setWorldObj((World) ProxyAccess.get(getWorld()));
+			copiedTileEntity.setWorld((World) ProxyAccess.get(getWorld()));
 			copiedTileEntity.setPos(pos);
 		}
 	}
@@ -192,7 +192,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	public void ejectCopiedState()
 	{
 		ItemStack is = ItemUtils.getItemStackFromState(getCopiedState());
-		EntityUtils.spawnEjectedItem(worldObj, pos, is);
+		EntityUtils.spawnEjectedItem(world, pos, is);
 	}
 
 	public boolean setPowerState(boolean powered)
@@ -205,9 +205,10 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		this.powered = powered;
 		this.inTransition = true;
 		//will probably break
-		worldObj.setBlockState(pos, getWorld().getBlockState(pos).withProperty(VanishingBlock.TRANSITION, true));
+		world.setBlockState(pos, getWorld().getBlockState(pos).withProperty(VanishingBlock.TRANSITION, true));
 
-		blockDrawn = false;
+		//		blockDrawn = false;
+		//		MalisisCore.message("blockDrawn > false (setPowerState)");
 
 		return true;
 	}
@@ -217,7 +218,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 	{
 		if (!inTransition && !powered)
 		{
-			if (!worldObj.isRemote)
+			if (!world.isRemote)
 				return;
 			float r = rand.nextFloat();
 			boolean b = r < MalisisBlocksSettings.vanishingGlitchChance.get();
@@ -226,6 +227,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 				vibrating = true;
 				vibratingTimer = 0;
 				blockDrawn = false;
+				//MalisisCore.message("blockDrawn > false (update)");
 				TileEntityUtils.notifyUpdate(this);
 			}
 
@@ -248,7 +250,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 				if (transitionTimer >= getDuration())
 				{
 					inTransition = false;
-					worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL,
+					world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL,
 							pos.getX() + 0.5F,
 							pos.getY() + 0.5F,
 							pos.getZ() + 0.5F,

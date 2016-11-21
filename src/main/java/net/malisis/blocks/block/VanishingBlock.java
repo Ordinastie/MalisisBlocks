@@ -77,7 +77,10 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 {
 	public enum Type implements IMSerializable
 	{
-		WOOD, IRON, GOLD, DIAMOND;
+		WOOD,
+		IRON,
+		GOLD,
+		DIAMOND;
 	};
 
 	public static final PropertyEnum<Type> TYPE = PropertyEnum.create("type", Type.class);
@@ -218,13 +221,10 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block)
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
 	{
-		if (world.isRemote)
-			return;
-
 		boolean powered = world.isBlockIndirectlyGettingPowered(pos) != 0;
-		if (powered || (block.getDefaultState().canProvidePower() && block != this))
+		if (powered || (neighborBlock.getDefaultState().canProvidePower() && neighborBlock != this))
 		{
 			if (isPowered(world, pos) != powered)
 				world.playSound(null, pos, Sounds.portal, SoundCategory.BLOCKS, 0.3F, 0.5F);

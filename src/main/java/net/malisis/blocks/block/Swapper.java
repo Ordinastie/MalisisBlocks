@@ -31,7 +31,8 @@ import net.malisis.core.MalisisCore;
 import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.block.component.DirectionalComponent;
 import net.malisis.core.block.component.PowerComponent;
-import net.malisis.core.block.component.PowerComponent.Type;
+import net.malisis.core.block.component.PowerComponent.ComponentType;
+import net.malisis.core.block.component.PowerComponent.InteractionType;
 import net.malisis.core.renderer.icon.provider.IIconProvider;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.block.Block;
@@ -62,7 +63,7 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 		setName("swapper");
 
 		addComponent(new DirectionalComponent(DirectionalComponent.ALL));
-		addComponent(new PowerComponent(Type.REDSTONE));
+		addComponent(new PowerComponent(InteractionType.REDSTONE, ComponentType.RECEIVER));
 
 		if (MalisisCore.isClient())
 		{
@@ -75,20 +76,15 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 	@Override
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
 	{
-		if (world.isRemote)
+		super.neighborChanged(state, world, pos, neighborBlock);
+
+		if (state == world.getBlockState(pos))
 			return;
 
-		boolean powered = world.isBlockIndirectlyGettingPowered(pos) != 0;
-		if (PowerComponent.isPowered(state) != powered)
-		{
-			world.playSound(null, pos, Sounds.portal, SoundCategory.BLOCKS, 0.3F, 0.5F);
-			if (world.isRemote)
-				return;
-			world.setBlockState(pos, state.withProperty(PowerComponent.getProperty(this), powered));
-			SwapperTileEntity te = TileEntityUtils.getTileEntity(SwapperTileEntity.class, world, pos);
-			if (te != null)
-				te.swap();
-		}
+		world.playSound(null, pos, Sounds.portal, SoundCategory.BLOCKS, 0.3F, 0.5F);
+		SwapperTileEntity te = TileEntityUtils.getTileEntity(SwapperTileEntity.class, world, pos);
+		if (te != null)
+			te.swap();
 	}
 
 	@Override
@@ -111,36 +107,4 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 	{
 		return getDefaultState();
 	}
-
-	//	@SideOnly(Side.CLIENT)
-	//	public static class SwapperIconProvider implements IBlockIconProvider
-	//	{
-	//		private Icon icon = new Icon(MalisisBlocks.modid + ":blocks/swapper");
-	//		private Icon top = new Icon(MalisisBlocks.modid + ":blocks/swapper_top");
-	//
-	//		@Override
-	//		public void registerIcons(TextureMap textureMap)
-	//		{
-	//			icon = icon.register(textureMap);
-	//			top = top.register(textureMap);
-	//		}
-	//
-	//		@Override
-	//		public Icon getIcon()
-	//		{
-	//			return icon;
-	//		}
-	//
-	//		@Override
-	//		public Icon getIcon(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side)
-	//		{
-	//			return side == EnumFacing.SOUTH ? top : icon;
-	//		}
-	//
-	//		@Override
-	//		public Icon getIcon(ItemStack itemStack, EnumFacing side)
-	//		{
-	//			return side == EnumFacing.UP ? top : icon;
-	//		}
-	//	}
 }

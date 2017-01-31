@@ -24,6 +24,8 @@
 
 package net.malisis.blocks.tileentity;
 
+import com.google.common.eventbus.Subscribe;
+
 import net.malisis.blocks.MalisisBlocks.Items;
 import net.malisis.blocks.block.VanishingBlock;
 import net.malisis.blocks.vanishingoption.VanishingOptions;
@@ -41,10 +43,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import com.google.common.eventbus.Subscribe;
 
 /**
  * @author Ordinastie
@@ -106,7 +107,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 		if (isItemStack == null)
 			return;
 
-		if (!applyItemStack(isItemStack, player, side, hitX, hitY, hitZ))
+		if (!applyItemStack(isItemStack, player, EnumHand.MAIN_HAND, side, hitX, hitY, hitZ))
 			return;
 
 		isOptions.save();
@@ -115,7 +116,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 			return;
 
 		ItemStack copy = isItemStack.copy();
-		copy.stackSize = 1;
+		copy.setCount(1);
 		vanishingOptions.getSlot().setItemStack(copy);
 	}
 
@@ -154,7 +155,7 @@ public class VanishingDiamondTileEntity extends VanishingTileEntity implements I
 	@Subscribe
 	public void onSlotChanged(InventoryEvent.SlotChanged event)
 	{
-		setBlockState(event.getSlot().getItemStack(), null, EnumFacing.UP, 0.5F, 0.5F, 0.5F);
+		setBlockState(event.getSlot().getItemStack(), null, null, EnumFacing.UP, 0.5F, 0.5F, 0.5F);
 		TileEntityUtils.notifyUpdate(this);
 	}
 

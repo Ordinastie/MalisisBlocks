@@ -67,16 +67,16 @@ public class Swapper extends MalisisBlock implements ITileEntityProvider
 
 		if (MalisisCore.isClient())
 		{
-			addComponent(IIconProvider.create(MalisisBlocks.modid + ":blocks/", "swapper")
+			addComponent(IIconProvider	.create(MalisisBlocks.modid + ":blocks/", "swapper")
 										.withSide(EnumFacing.SOUTH, "swapper_top")
 										.build());
 		}
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos)
 	{
-		super.neighborChanged(state, world, pos, neighborBlock);
+		super.neighborChanged(state, world, pos, neighborBlock, fromPos);
 
 		if (state == world.getBlockState(pos))
 			return;

@@ -24,6 +24,8 @@
 
 package net.malisis.blocks.item;
 
+import com.google.common.eventbus.Subscribe;
+
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.renderer.VanishingCopierRenderer;
 import net.malisis.blocks.vanishingoption.VanishingOptions;
@@ -49,8 +51,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.eventbus.Subscribe;
-
 /**
  * @author Ordinastie
  *
@@ -63,7 +63,7 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 		setName("vanishingCopier");
 		setCreativeTab(MalisisBlocks.tab);
 		setMaxDamage(0);
-		setTexture(MalisisBlocks.modid + ":items/vanishingCopier");
+		setTexture(MalisisBlocks.modid + ":items/vanishing_copier");
 	}
 
 	public VanishingOptions getVanishingOptions(ItemStack itemStack)
@@ -77,8 +77,9 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand)
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
 	{
+		ItemStack itemStack = player.getHeldItem(hand);
 		if (world.isRemote || hand == EnumHand.OFF_HAND)
 			return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
 
@@ -147,6 +148,6 @@ public class VanishingCopierItem extends MalisisItem implements IDeferredInvento
 		ItemStack is = getVanishingOptions(itemStack).getSlot().getItemStack();
 		if (is == null)
 			return 1;
-		return 1 - ((double) is.stackSize / is.getMaxStackSize());
+		return 1 - ((double) is.getCount() / is.getMaxStackSize());
 	}
 }

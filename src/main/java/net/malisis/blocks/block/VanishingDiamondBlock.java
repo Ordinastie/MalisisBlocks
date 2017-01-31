@@ -24,8 +24,6 @@
 
 package net.malisis.blocks.block;
 
-import java.util.List;
-
 import net.malisis.blocks.MalisisBlocks.Items;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
@@ -42,6 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -75,7 +74,7 @@ public class VanishingDiamondBlock extends VanishingBlock
 	{}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (world.isRemote)
 			return true;
@@ -95,7 +94,7 @@ public class VanishingDiamondBlock extends VanishingBlock
 	}
 
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list)
+	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
 	{}
 
 	@Override

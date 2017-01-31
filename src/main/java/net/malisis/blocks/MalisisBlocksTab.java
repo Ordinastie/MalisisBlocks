@@ -25,7 +25,7 @@
 package net.malisis.blocks;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 /**
  * @author Ordinastie
@@ -39,8 +39,8 @@ public class MalisisBlocksTab extends CreativeTabs
 	}
 
 	@Override
-	public Item getTabIconItem()
+	public ItemStack getTabIconItem()
 	{
-		return Item.getItemFromBlock(MalisisBlocks.Blocks.vanishingBlock);
+		return new ItemStack(MalisisBlocks.Blocks.vanishingBlock);
 	}
 }

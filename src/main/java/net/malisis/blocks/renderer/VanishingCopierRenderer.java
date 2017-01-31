@@ -97,13 +97,13 @@ public class VanishingCopierRenderer extends DefaultRenderer.Item
 		byte count = 1;
 		if (tranformType != TransformType.GUI)
 		{
-			if (copiedStack.stackSize > 48)
+			if (copiedStack.getCount() > 48)
 				count = 5;
-			else if (copiedStack.stackSize > 32)
+			else if (copiedStack.getCount() > 32)
 				count = 4;
-			else if (copiedStack.stackSize > 16)
+			else if (copiedStack.getCount() > 16)
 				count = 3;
-			else if (copiedStack.stackSize > 1)
+			else if (copiedStack.getCount() > 1)
 				count = 2;
 		}
 

@@ -26,6 +26,8 @@ package net.malisis.blocks.block;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import net.malisis.blocks.item.MixedBlockBlockItem;
 import net.malisis.blocks.renderer.MixedBlockRenderer;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
@@ -55,8 +57,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.collect.Lists;
-
 @MalisisRendered(MixedBlockRenderer.class)
 public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 {
@@ -83,7 +83,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 			return;
 		te.set(itemStack);
 		world.checkLight(pos);
-		world.notifyBlockOfStateChange(pos, this);
+		world.notifyNeighborsOfStateChange(pos, this, false);
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class MixedBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer)
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 	{
 		return layer == BlockRenderLayer.TRANSLUCENT;
 	}

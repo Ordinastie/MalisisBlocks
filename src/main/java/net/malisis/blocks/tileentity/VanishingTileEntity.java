@@ -26,6 +26,8 @@ package net.malisis.blocks.tileentity;
 
 import java.util.Random;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.ProxyAccess;
@@ -45,12 +47,11 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 public class VanishingTileEntity extends TileEntity implements ITickable
 {
@@ -70,8 +71,13 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 
 	private final Random rand = new Random();
 
-	private Block[] excludes = new Block[] { MalisisBlocks.Blocks.vanishingBlock, Blocks.AIR, Blocks.LADDER, Blocks.STONE_BUTTON,
-			Blocks.WOODEN_BUTTON, Blocks.LEVER, Blocks.VINE };
+	private Block[] excludes = new Block[] {	MalisisBlocks.Blocks.vanishingBlock,
+												Blocks.AIR,
+												Blocks.LADDER,
+												Blocks.STONE_BUTTON,
+												Blocks.WOODEN_BUTTON,
+												Blocks.LEVER,
+												Blocks.VINE };
 
 	public boolean blockDrawn = true;
 
@@ -131,13 +137,13 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		this.copiedState = state;
 	}
 
-	public boolean applyItemStack(ItemStack itemStack, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean applyItemStack(ItemStack itemStack, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		ItemStack is = null;
 		if (copiedState != null)
 			is = copiedState.getBlock().getPickBlock(copiedState, null, ((World) ProxyAccess.get(world)), pos, player);
 
-		if (!setBlockState(itemStack, player, side, hitX, hitY, hitZ))
+		if (!setBlockState(itemStack, player, hand, side, hitX, hitY, hitZ))
 			return false;
 
 		EntityUtils.spawnEjectedItem(world, pos, is);
@@ -146,13 +152,13 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 			return true;
 
 		if (!player.capabilities.isCreativeMode)
-			itemStack.stackSize--;
+			itemStack.shrink(1);
 
-		((World) ProxyAccess.get(world)).notifyNeighborsOfStateChange(pos, getCopiedState().getBlock());
+		((World) ProxyAccess.get(world)).notifyNeighborsOfStateChange(pos, getCopiedState().getBlock(), true);
 		return true;
 	}
 
-	public boolean setBlockState(ItemStack itemStack, EntityPlayer p, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean setBlockState(ItemStack itemStack, EntityPlayer p, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		if (itemStack == null)
 		{
@@ -170,7 +176,7 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 		copiedState = state;
 		initCopiedTileEntity();
 		Silenced.exec(() -> {
-			copiedState = state.getBlock().getStateForPlacement(proxy, pos, side, hitX, hitY, hitZ, itemStack.getMetadata(), p, itemStack);
+			copiedState = state.getBlock().getStateForPlacement(proxy, pos, side, hitX, hitY, hitZ, itemStack.getMetadata(), p, hand);
 			if (p != null)
 				copiedState.getBlock().onBlockPlacedBy(proxy, pos, copiedState, p, itemStack);
 		});
@@ -251,12 +257,12 @@ public class VanishingTileEntity extends TileEntity implements ITickable
 				{
 					inTransition = false;
 					world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL,
-							pos.getX() + 0.5F,
-							pos.getY() + 0.5F,
-							pos.getZ() + 0.5F,
-							0.0F,
-							0.0F,
-							0.0F);
+										pos.getX() + 0.5F,
+										pos.getY() + 0.5F,
+										pos.getZ() + 0.5F,
+										0.0F,
+										0.0F,
+										0.0F);
 				}
 			}
 			else

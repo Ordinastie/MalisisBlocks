@@ -26,6 +26,13 @@ package net.malisis.blocks.item;
 
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.renderer.MixedBlockRenderer;
@@ -45,13 +52,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.World;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
 @MalisisRendered(MixedBlockRenderer.class)
 public class MixedBlockBlockItem extends ItemBlock
@@ -88,14 +88,14 @@ public class MixedBlockBlockItem extends ItemBlock
 	public static ItemStack fromItemStacks(ItemStack is1, ItemStack is2)
 	{
 		if (!canBeMixed(is1) || !canBeMixed(is2))
-			return null;
+			return ItemStack.EMPTY;
 
 		IBlockState state1 = Objects.firstNonNull(itemsAllowed.get(is1.getItem()), ItemUtils.getStateFromItemStack(is1));
 		IBlockState state2 = Objects.firstNonNull(itemsAllowed.get(is2.getItem()), ItemUtils.getStateFromItemStack(is2));
 
 		//last check
 		if (state1 == null || state2 == null || state1.equals(state2))
-			return null;
+			return ItemStack.EMPTY;
 
 		//nbt
 		ItemStack itemStack = new ItemStack(MalisisBlocks.Blocks.mixedBlock, 1);

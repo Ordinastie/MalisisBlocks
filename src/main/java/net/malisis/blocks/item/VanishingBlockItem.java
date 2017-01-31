@@ -26,8 +26,8 @@ package net.malisis.blocks.item;
 
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.block.VanishingBlock;
+import net.malisis.core.block.MalisisBlock;
 import net.malisis.core.item.MalisisItemBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,7 +39,7 @@ public class VanishingBlockItem extends MalisisItemBlock
 {
 	String[] names = { "wood", "iron", "gold", "diamond" };
 
-	public VanishingBlockItem(Block block)
+	public VanishingBlockItem(MalisisBlock block)
 	{
 		super(block);
 		setHasSubtypes(true);

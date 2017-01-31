@@ -3,6 +3,8 @@ package net.malisis.blocks.block;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.collect.Lists;
+
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.core.block.BoundingBoxType;
 import net.malisis.core.block.MalisisBlock;
@@ -19,8 +21,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import com.google.common.collect.Lists;
 
 public class PlayerSensor extends MalisisBlock
 {
@@ -80,7 +80,7 @@ public class PlayerSensor extends MalisisBlock
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos)
 	{
 		EnumFacing dir = DirectionalComponent.getDirection(world, pos).getOpposite();
 		if (!world.isSideSolid(pos.offset(dir), dir))
@@ -196,8 +196,8 @@ public class PlayerSensor extends MalisisBlock
 
 	private void notifyPower(World world, BlockPos pos, IBlockState state)
 	{
-		world.notifyNeighborsOfStateChange(pos, this);
-		world.notifyNeighborsOfStateChange(pos.offset(DirectionalComponent.getDirection(state).getOpposite()), this);
+		world.notifyNeighborsOfStateChange(pos, this, true);
+		world.notifyNeighborsOfStateChange(pos.offset(DirectionalComponent.getDirection(state).getOpposite()), this, true);
 	}
 
 	@Override

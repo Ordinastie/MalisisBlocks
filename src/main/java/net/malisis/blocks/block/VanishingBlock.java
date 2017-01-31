@@ -27,6 +27,8 @@ package net.malisis.blocks.block;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocks.Sounds;
 import net.malisis.blocks.ProxyAccess;
@@ -60,6 +62,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -97,10 +100,8 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		setCreativeTab(MalisisBlocks.tab);
 		setHardness(0.5F);
 
-		setDefaultState(blockState.getBaseState()
-									.withProperty(TYPE, Type.WOOD)
-									.withProperty(POWERED, false)
-									.withProperty(TRANSITION, false));
+		setDefaultState(blockState.getBaseState().withProperty(TYPE, Type.WOOD).withProperty(POWERED, false).withProperty(	TRANSITION,
+																															false));
 
 		if (MalisisCore.isClient())
 		{
@@ -206,22 +207,22 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	// #region Events
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (te == null)
 			return false;
 
 		if (player.isSneaking())
-			te.applyItemStack(null, player, side, hitX, hitY, hitZ);
+			te.applyItemStack(null, player, hand, side, hitX, hitY, hitZ);
 		else if (te.getCopiedState() == null)
-			return te.applyItemStack(player.getHeldItem(hand), player, side, hitX, hitY, hitZ);
+			return te.applyItemStack(player.getHeldItem(hand), player, hand, side, hitX, hitY, hitZ);
 
 		return false;
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos)
 	{
 		boolean powered = world.isBlockIndirectlyGettingPowered(pos) != 0;
 		if (powered || (neighborBlock.getDefaultState().canProvidePower() && neighborBlock != this))
@@ -270,19 +271,20 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
+	@Nullable
 	@SuppressWarnings("deprecation")
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos)
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
 			return super.getCollisionBoundingBox(state, world, pos);
 
-		return te.getCopiedState().getCollisionBoundingBox((World) ProxyAccess.get(world), pos);
+		return te.getCopiedState().getCollisionBoundingBox(ProxyAccess.get(world), pos);
 
 	}
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask, List<AxisAlignedBB> list, @Nullable Entity collidingEntity, boolean useActualState)
 	{
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
@@ -291,7 +293,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 			return;
 		}
 
-		te.getCopiedState().addCollisionBoxToList((World) ProxyAccess.get(world), pos, mask, list, collidingEntity);
+		te.getCopiedState().addCollisionBoxToList((World) ProxyAccess.get(world), pos, mask, list, collidingEntity, useActualState);
 	}
 
 	@Override
@@ -339,7 +341,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list)
+	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
 	{
 		for (Type type : Type.values())
 			list.add(new ItemStack(item, 1, type.ordinal()));
@@ -394,7 +396,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer)
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 	{
 		return true;
 	}

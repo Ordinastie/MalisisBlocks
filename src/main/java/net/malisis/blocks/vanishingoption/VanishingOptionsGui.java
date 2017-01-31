@@ -26,6 +26,12 @@ package net.malisis.blocks.vanishingoption;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
+import com.google.common.eventbus.Subscribe;
+
 import net.malisis.blocks.network.VanishingDiamondFrameMessage;
 import net.malisis.blocks.network.VanishingDiamondFrameMessage.DataType;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
@@ -43,12 +49,6 @@ import net.malisis.core.client.gui.event.ComponentEvent;
 import net.malisis.core.inventory.MalisisInventoryContainer;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.util.EnumFacing;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
-import com.google.common.eventbus.Subscribe;
 
 /**
  * @author Ordinastie
@@ -93,13 +93,13 @@ public class VanishingOptionsGui extends MalisisGui
 			cb.setPosition(2, y).setChecked(state.shouldPropagate).register(this);
 			cb.attachData(Pair.of(dir, DataType.PROPAGATION));
 
-			UITextField textField = new UITextField(this, "" + state.delay).setSize(27, 0)
+			UITextField textField = new UITextField(this, "" + state.delay)	.setSize(27, 0)
 																			.setPosition(55, y)
 																			.setDisabled(!state.shouldPropagate)
 																			.register(this);
 			textField.attachData(Pair.of(dir, DataType.DELAY));
 
-			UICheckBox invCb = new UICheckBox(this).setPosition(105, y)
+			UICheckBox invCb = new UICheckBox(this)	.setPosition(105, y)
 													.setDisabled(!state.shouldPropagate)
 													.setChecked(state.inversed)
 													.register(this);
@@ -116,14 +116,14 @@ public class VanishingOptionsGui extends MalisisGui
 
 		UIContainer<?> cont = new UIContainer<>(this, 50, 60).setPosition(0, 40, Anchor.RIGHT);
 
-		duration = new UITextField(this, "" + vanishingOptions.getDuration()).setSize(30, 0)
+		duration = new UITextField(this, "" + vanishingOptions.getDuration())	.setSize(30, 0)
 																				.setPosition(0, 10, Anchor.CENTER)
 																				.register(this);
 		duration.attachData(Pair.of(null, DataType.DURATION));
 		cont.add(new UILabel(this, "Duration").setPosition(0, 0, Anchor.CENTER));
 		cont.add(duration);
 
-		UIInventory inv = new UIInventory(this, inventoryContainer.getInventory(1));
+		UIInventory inv = new UIInventory(this, inventoryContainer.getInventory(0));
 		inv.setPosition(0, 40, Anchor.CENTER);
 		cont.add(new UILabel(this, "Block").setPosition(0, 30, Anchor.CENTER));
 		cont.add(inv);

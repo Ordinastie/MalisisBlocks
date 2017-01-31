@@ -33,7 +33,7 @@ import net.malisis.core.network.IMalisisMessageHandler;
 import net.malisis.core.network.MalisisMessage;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +65,7 @@ public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<Vani
 	public void process(Packet message, MessageContext ctx)
 	{
 		VanishingOptions vanishingOptions = null;
-		EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+		EntityPlayer player = IMalisisMessageHandler.getPlayer(ctx);
 		if (message.isTileEntity)
 		{
 

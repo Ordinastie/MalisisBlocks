@@ -25,11 +25,11 @@ public class BlockMixerTileEntity extends TileEntity implements IDirectInventory
 
 	public BlockMixerTileEntity()
 	{
-		firstInput = new MixerSlot(0);
-		secondInput = new MixerSlot(1);
-		output = new MalisisSlot(2);
+		firstInput = new MixerSlot();
+		secondInput = new MixerSlot();
+		output = new MalisisSlot();
 		output.setOutputSlot();
-		inventory = new MalisisInventory(this, new MalisisSlot[] { firstInput, secondInput, output });
+		inventory = new MalisisInventory(this, firstInput, secondInput, output);
 	}
 
 	@Override
@@ -51,23 +51,23 @@ public class BlockMixerTileEntity extends TileEntity implements IDirectInventory
 		ItemStack firstItemStack = firstInput.getItemStack();
 		ItemStack secondItemStack = secondInput.getItemStack();
 		ItemStack outputItemStack = output.getItemStack();
-		if (firstItemStack == null || secondItemStack == null)
+		if (firstItemStack.isEmpty() || secondItemStack.isEmpty())
 		{
 			mixTimer = 0;
 			return;
 		}
 
 		ItemStack expected = MixedBlockBlockItem.fromItemStacks(firstItemStack, secondItemStack);
-		if (expected == null)
+		if (expected.isEmpty())
 		{
 			mixTimer = 0;
 			return;
 		}
 
-		if (outputItemStack != null)
+		if (!outputItemStack.isEmpty())
 		{
 			if (!ItemStack.areItemStackTagsEqual(outputItemStack, expected)
-					|| outputItemStack.stackSize >= outputItemStack.getMaxStackSize())
+					|| outputItemStack.getCount() >= outputItemStack.getMaxStackSize())
 			{
 				mixTimer = 0;
 				return;
@@ -109,11 +109,6 @@ public class BlockMixerTileEntity extends TileEntity implements IDirectInventory
 
 	public class MixerSlot extends MalisisSlot
 	{
-		public MixerSlot(int index)
-		{
-			super(index);
-		}
-
 		@Override
 		public boolean isItemValid(ItemStack itemStack)
 		{

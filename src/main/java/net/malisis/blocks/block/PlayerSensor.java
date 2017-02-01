@@ -17,6 +17,7 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -25,6 +26,9 @@ import net.minecraft.world.World;
 public class PlayerSensor extends MalisisBlock
 {
 	public static PropertyBool POWERED = PropertyBool.create("powered");
+
+	private static AxisAlignedBB AABB_SIDE = new AxisAlignedBB(0.125F, 0.125F, 0, 0.875F, 0.25F, 0.125F);
+	private static AxisAlignedBB AABB_BOTTOM = new AxisAlignedBB(0.25F, 0.25F, 0, 0.75F, 0.75F, 0.0625F);
 
 	public PlayerSensor()
 	{
@@ -50,16 +54,8 @@ public class PlayerSensor extends MalisisBlock
 		if (type == BoundingBoxType.COLLISION)
 			return null;
 
-		float f = 0.125F;
-		switch (DirectionalComponent.getDirection(world, pos))
-		{
-			case DOWN:
-				return new AxisAlignedBB(0.5F - f, 1 - f / 2, 0.5F - f, 0.5F + f, 1, 0.5F + f);
-			case UP:
-				return new AxisAlignedBB(0.5F - f, 0, 0.5F - f, 0.5F + f, f / 2, 0.5F + f);
-			default:
-				return new AxisAlignedBB(f, f, 0, 1 - f, 2 * f, f);
-		}
+		//world == null -> item
+		return DirectionalComponent.getDirection(state).getAxis() == Axis.Y && world != null ? AABB_BOTTOM : AABB_SIDE;
 	}
 
 	@Override

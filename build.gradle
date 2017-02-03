@@ -37,7 +37,7 @@ dependencies
 {
 	compile 'org.projectlombok:lombok:1.16.12'
 	//compile 'net.malisis:malisiscore:1.10.2-4.2.8:dev'	
-	compile files('../MalisisCore/build/libs/malisiscore-1.11.2-5.0.1-dev.jar')
+	compile files('../MalisisCore/build/libs/malisiscore-1.11.2-5.0.0-dev.jar')
 }
 
 // because the normal output has been made to be obfuscated
@@ -100,8 +100,6 @@ if (project.hasProperty('curseapi')) {
 		project {
 			id = '237862'
 			releaseType = 'release'
-				
-			addGameVersion '1.10.2'
 					
 			addArtifact deobfJar
 			addArtifact sourceJar

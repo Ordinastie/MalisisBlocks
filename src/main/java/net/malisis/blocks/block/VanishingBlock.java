@@ -289,7 +289,7 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 		VanishingTileEntity te = TileEntityUtils.getTileEntity(VanishingTileEntity.class, world, pos);
 		if (!shouldDefer(te))
 		{
-			super.addCollisionBoxToList(state, world, pos, mask, list, collidingEntity);
+			super.addCollisionBoxToList(state, world, pos, mask, list, collidingEntity, false);
 			return;
 		}
 

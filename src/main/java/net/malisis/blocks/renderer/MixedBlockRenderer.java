@@ -28,6 +28,9 @@ import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.opengl.GL11;
+
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.item.MixedBlockBlockItem;
@@ -41,7 +44,7 @@ import net.malisis.core.renderer.element.Face;
 import net.malisis.core.renderer.element.MergedVertex;
 import net.malisis.core.renderer.element.Shape;
 import net.malisis.core.renderer.element.shape.Cube;
-import net.malisis.core.renderer.icon.VanillaIcon;
+import net.malisis.core.renderer.icon.Icon;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -50,9 +53,6 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.GL11;
 
 public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 {
@@ -188,13 +188,13 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 		shape = simpleShape;
 		set(reversed ? state2 : state1);
 		shape.resetState().setSize(width, height, depth);
-		rp.icon.set(new VanillaIcon(blockState));
+		rp.icon.set(Icon.from(blockState));
 		setColor();
 		drawShape(shape, rp);
 
 		set(reversed ? state1 : state2);
 		shape.resetState().setSize(width, height, depth).translate(offsetX, offestY, offsetZ);
-		rp.icon.set(new VanillaIcon(blockState));
+		rp.icon.set(Icon.from(blockState));
 		setColor();
 		drawShape(shape, rp);
 	}
@@ -215,7 +215,7 @@ public class MixedBlockRenderer extends MalisisRenderer<MixedBlockTileEntity>
 				v.setAlpha(0);
 		}
 
-		rp.icon.set(new VanillaIcon(blockState));
+		rp.icon.set(Icon.from(blockState));
 		setColor();
 
 		drawShape(shape, rp);

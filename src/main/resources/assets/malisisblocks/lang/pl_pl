@@ -1,0 +1,30 @@
+itemGroup.malisisblocks=MalisisBlocks
+
+tile.player_sensor.name=Wykrywacz gracza
+tile.vanishing_block_wood.name=Drewniana rama zanikania
+tile.vanishing_block_iron.name=Żelazna rama zanikania
+tile.vanishing_block_gold.name=Złota rama zanikania
+tile.vanishing_block_diamond.name=Diamentowa rama zanikania
+tile.block_mixer.name=Mikser bloków
+tile.mixed_block.name=Pomieszany blok
+tile.swapper.name=Zamieniator
+	
+
+config.simpleMixedBlockRendering=Szybkie rysowanie pomiesznych bloków
+config.simpleMixedBlockRendering.comment1=Włącza mniej dokładne rysowanie pomiesznych blocków.
+config.simpleMixedBlockRendering.comment2=Zaznacz tę opcję, jeśli bloki rysują się niepoprawnie.
+
+config.enableVanishingGlitch=Aktywuj animację usterki ramy
+config.enableVanishingGlitch.comment=Ramy stają się niestabilne i są na jakiś czas poza wymiarem.
+ 
+config.vanishingGlitchChance=Częstotliwość usterki ramy zanikania
+config.vanishingGlitchChance.comment=Jak często ramka się trzęsie.
+
+config.enhancedMixedBlockPlacement=Użyj ulepszonego stawiania pomieszanych bloków
+config.enhancedMixedBlockPlacement.comment1=Pozwala postawić podstawę bloku tam, gdzie patrzysz, zamiast - strony, po której go kładziesz.
+config.enhancedMixedBlockPlacement.comment2=Kucnij, aby postawić blok odwrotnie.
+
+gui.block_mixer.simple_rendering=Szybkie rysowanie
+gui.block_mixer.simple_rendering_tooltip=Bloki potrzebują aktualizacji chunków, by odnieść skutek
+
+gui.vanishingoptions.title=Opcje zanikania

@@ -26,6 +26,7 @@ package net.malisis.blocks;
 
 import static net.malisis.blocks.MalisisBlocks.Blocks.*;
 import static net.malisis.blocks.MalisisBlocks.Items.*;
+
 import net.malisis.blocks.MalisisBlocks.Sounds;
 import net.malisis.blocks.block.BlockMixer;
 import net.malisis.blocks.block.MixedBlock;
@@ -40,11 +41,7 @@ import net.malisis.blocks.tileentity.SwapperTileEntity;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
 import net.malisis.core.registry.MalisisRegistry;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class Registers
 {
@@ -69,46 +66,48 @@ public class Registers
 		vanishingDiamondBlock.register();
 
 		// Vanishing Block Recipes
-		GameRegistry.addRecipe(new ItemStack(vanishingBlock, 4, 0),
-				"ABA",
-				"BCB",
-				"ABA",
-				'A',
-				Items.REDSTONE,
-				'B',
-				Items.STICK,
-				'C',
-				Items.ENDER_PEARL);
-		GameRegistry.addRecipe(new ItemStack(vanishingBlock, 4, 1),
-				"ABA",
-				"BCB",
-				"ABA",
-				'A',
-				Items.REDSTONE,
-				'B',
-				Items.IRON_INGOT,
-				'C',
-				Items.ENDER_PEARL);
-		GameRegistry.addRecipe(new ItemStack(vanishingBlock, 4, 2),
-				"ABA",
-				"BCB",
-				"ABA",
-				'A',
-				Items.REDSTONE,
-				'B',
-				Items.GOLD_INGOT,
-				'C',
-				Items.ENDER_PEARL);
-		GameRegistry.addRecipe(new ItemStack(vanishingBlock, 4, 3),
-				"ABA",
-				"BCB",
-				"ABA",
-				'A',
-				Items.REDSTONE,
-				'B',
-				Items.DIAMOND,
-				'C',
-				Items.ENDER_PEARL);
+		//		GameRegistry.addRecipe(new ItemStack(vanishingBlock, 4, 0),
+		//				"ABA",
+		//				"BCB",
+		//				"ABA",
+		//				'A',
+		//				Items.REDSTONE,
+		//				'B',
+		//				Items.STICK,
+		//				'C',
+		//				Items.ENDER_PEARL);
+		//		GameRegistry.addRecipe(	new ItemStack(vanishingBlock, 4, 1),
+		//								"ABA",
+		//								"BCB",
+		//								"ABA",
+		//								'A',
+		//								Items.REDSTONE,
+		//								'B',
+		//								Items.IRON_INGOT,
+		//								'C',
+		//								Items.ENDER_PEARL);
+		//		GameRegistry.addRecipe(	new ItemStack(vanishingBlock, 4, 2),
+		//								"ABA",
+		//								"BCB",
+		//								"ABA",
+		//								'A',
+		//								Items.REDSTONE,
+		//								'B',
+		//								Items.GOLD_INGOT,
+		//								'C',
+		//								Items.ENDER_PEARL);
+		//		GameRegistry.addRecipe(	new ItemStack(	vanishingBlock,
+		//												4,
+		//												3),
+		//								"ABA",
+		//								"BCB",
+		//								"ABA",
+		//								'A',
+		//								Items.REDSTONE,
+		//								'B',
+		//								Items.DIAMOND,
+		//								'C',
+		//								Items.ENDER_PEARL);
 
 		GameRegistry.registerTileEntity(VanishingTileEntity.class, "vanishingTileEntity");
 		GameRegistry.registerTileEntity(VanishingDiamondTileEntity.class, "vanishingDiamondTileEntity");
@@ -116,14 +115,14 @@ public class Registers
 		vanishingCopierItem = new VanishingCopierItem();
 		vanishingCopierItem.register();
 
-		GameRegistry.addRecipe(new ItemStack(vanishingCopierItem),
-				"A  ",
-				" B ",
-				"  B",
-				'A',
-				new ItemStack(vanishingBlock, 1, 3),
-				'B',
-				Items.IRON_INGOT);
+		//		GameRegistry.addRecipe(	new ItemStack(vanishingCopierItem),
+		//								"A  ",
+		//								" B ",
+		//								"  B",
+		//								'A',
+		//								new ItemStack(vanishingBlock, 1, 3),
+		//								'B',
+		//								Items.IRON_INGOT);
 
 	}
 
@@ -135,7 +134,7 @@ public class Registers
 		mixedBlock.register();
 
 		// Block Mixer recipe
-		GameRegistry.addRecipe(new ItemStack(blockMixer), "AAA", "B B", "AAA", 'A', Items.IRON_INGOT, 'B', Blocks.PISTON);
+		//GameRegistry.addRecipe(new ItemStack(blockMixer), "AAA", "B B", "AAA", 'A', Items.IRON_INGOT, 'B', Blocks.PISTON);
 
 		GameRegistry.registerTileEntity(BlockMixerTileEntity.class, "blockMixerTileEntity");
 		GameRegistry.registerTileEntity(MixedBlockTileEntity.class, "mixedBlockTileEntity");
@@ -147,8 +146,15 @@ public class Registers
 		playerSensor.register();
 
 		// Sensor recipe
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(playerSensor), "ABA", "CCC", 'A', Items.IRON_INGOT, 'B', Items.REDSTONE,
-				'C', "blockGlassColorless"));
+		//		GameRegistry.addRecipe(new ShapedOreRecipe(	new ItemStack(playerSensor),
+		//													"ABA",
+		//													"CCC",
+		//													'A',
+		//													Items.IRON_INGOT,
+		//													'B',
+		//													Items.REDSTONE,
+		//													'C',
+		//													"blockGlassColorless"));
 	}
 
 	private static void registerSwapper()
@@ -157,7 +163,7 @@ public class Registers
 		swapper.register();
 
 		GameRegistry.registerTileEntity(SwapperTileEntity.class, "swapperTileEntity");
-		GameRegistry.addRecipe(new ItemStack(swapper), "AAA", "B B", "AAA", 'A', Items.IRON_INGOT, 'B', Items.COMPARATOR);
+		//	GameRegistry.addRecipe(new ItemStack(swapper), "AAA", "B B", "AAA", 'A', Items.IRON_INGOT, 'B', Items.COMPARATOR);
 
 	}
 

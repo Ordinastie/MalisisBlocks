@@ -26,6 +26,9 @@ package net.malisis.blocks.renderer;
 
 import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
+
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.ProxyAccess;
 import net.malisis.blocks.tileentity.VanishingTileEntity;
@@ -48,9 +51,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 {
@@ -102,16 +102,12 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 					vertexDrawn |= blockRenderer.renderBlock(tileEntity.getCopiedState(), pos, ProxyAccess.get(world), buffer);
 				else
 				{
-					IBlockState copiedState = tileEntity.getCopiedState()
-														.getBlock()
-														.getExtendedState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
+					IBlockState copiedState = tileEntity.getCopiedState().getBlock().getExtendedState(	tileEntity.getCopiedState(),
+																										ProxyAccess.get(world),
+																										pos);
 					IBakedModel model = blockRenderer.getModelForState(tileEntity.getCopiedState());
-					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world),
-							model,
-							copiedState,
-							pos,
-							buffer,
-							true);
+					vertexDrawn |= blockRenderer.getBlockModelRenderer()
+												.renderModel(ProxyAccess.get(world), model, copiedState, pos, buffer, true);
 				}
 			}
 		}
@@ -210,16 +206,12 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 				}
 				else
 				{
-					IBlockState copiedState = tileEntity.getCopiedState()
-														.getBlock()
-														.getExtendedState(tileEntity.getCopiedState(), ProxyAccess.get(world), pos);
+					IBlockState copiedState = tileEntity.getCopiedState().getBlock().getExtendedState(	tileEntity.getCopiedState(),
+																										ProxyAccess.get(world),
+																										pos);
 					IBakedModel model = blockRenderer.getModelForState(tileEntity.getCopiedState());
-					vertexDrawn |= blockRenderer.getBlockModelRenderer().renderModel(ProxyAccess.get(world),
-							model,
-							copiedState,
-							pos,
-							buffer,
-							false);
+					vertexDrawn |= blockRenderer.getBlockModelRenderer()
+												.renderModel(ProxyAccess.get(world), model, copiedState, pos, buffer, false);
 				}
 
 				next();
@@ -237,7 +229,7 @@ public class VanishingBlockRenderer extends MalisisRenderer<VanishingTileEntity>
 			{
 				TileEntity te = tileEntity.getCopiedTileEntity();
 				clean();
-				TileEntityRendererDispatcher.instance.renderTileEntity(te, partialTick, 0);
+				TileEntityRendererDispatcher.instance.render(te, partialTick, 0);
 			}
 
 			MalisisBlocksSettings.simpleMixedBlockRendering.set(smbr);

@@ -93,10 +93,10 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	public static int renderId = -1;
 	public int renderPass = -1;
 
-	public VanishingBlock()
+	protected VanishingBlock(String name)
 	{
 		super(Material.WOOD);
-		setName("vanishing_block");
+		setName(name);
 		setCreativeTab(MalisisBlocks.tab);
 		setHardness(0.5F);
 
@@ -110,6 +110,12 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 				builder.withValue(type, "vanishing_block_" + type.getName().toLowerCase());
 			addComponent(builder.build());
 		}
+
+	}
+
+	public VanishingBlock()
+	{
+		this("vanishing_block");
 	}
 
 	@Override
@@ -341,10 +347,10 @@ public class VanishingBlock extends MalisisBlock implements ITileEntityProvider
 	}
 
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
+	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
 		for (Type type : Type.values())
-			list.add(new ItemStack(item, 1, type.ordinal()));
+			list.add(new ItemStack(this, 1, type.ordinal()));
 	}
 
 	@Override

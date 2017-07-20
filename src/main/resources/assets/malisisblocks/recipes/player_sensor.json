@@ -1,0 +1,22 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ABA",
+		"CCC"
+	],
+	"key": {
+		"A": {
+			"item": "minecraft:iron_ingot"
+		},
+		"B": {
+			"item": "minecraft:redstone"
+		},
+		"C": {
+			"type": "forge:ore_dict",
+			"ore": "blockGlassColorless"
+		}
+	},
+	"result": {
+		"item": "malisisblocks:player_sensor"
+	}
+}

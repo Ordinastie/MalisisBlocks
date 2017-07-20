@@ -26,10 +26,12 @@ package net.malisis.blocks.item;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -38,23 +40,23 @@ import net.malisis.blocks.block.MixedBlock;
 import net.malisis.blocks.renderer.MixedBlockRenderer;
 import net.malisis.blocks.tileentity.MixedBlockTileEntity;
 import net.malisis.core.block.MalisisBlock;
+import net.malisis.core.item.MalisisItemBlock;
 import net.malisis.core.renderer.MalisisRendered;
 import net.malisis.core.util.ItemUtils;
 import net.malisis.core.util.MBlockState;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.World;
 
 @MalisisRendered(MixedBlockRenderer.class)
-public class MixedBlockBlockItem extends ItemBlock
+public class MixedBlockBlockItem extends MalisisItemBlock
 {
 	private static BiMap<Item, IBlockState> itemsAllowed = HashBiMap.create();
 	static
@@ -64,7 +66,7 @@ public class MixedBlockBlockItem extends ItemBlock
 		itemsAllowed.put(Items.LAVA_BUCKET, Blocks.LAVA.getDefaultState());
 	}
 
-	public MixedBlockBlockItem(Block block)
+	public MixedBlockBlockItem(MixedBlock block)
 	{
 		super(block);
 	}
@@ -90,8 +92,8 @@ public class MixedBlockBlockItem extends ItemBlock
 		if (!canBeMixed(is1) || !canBeMixed(is2))
 			return ItemStack.EMPTY;
 
-		IBlockState state1 = Objects.firstNonNull(itemsAllowed.get(is1.getItem()), ItemUtils.getStateFromItemStack(is1));
-		IBlockState state2 = Objects.firstNonNull(itemsAllowed.get(is2.getItem()), ItemUtils.getStateFromItemStack(is2));
+		IBlockState state1 = MoreObjects.firstNonNull(itemsAllowed.get(is1.getItem()), ItemUtils.getStateFromItemStack(is1));
+		IBlockState state2 = MoreObjects.firstNonNull(itemsAllowed.get(is2.getItem()), ItemUtils.getStateFromItemStack(is2));
 
 		//last check
 		if (state1 == null || state2 == null || state1.equals(state2))
@@ -111,7 +113,7 @@ public class MixedBlockBlockItem extends ItemBlock
 	}
 
 	@Override
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean advancedTooltip)
+	public void addInformation(ItemStack itemStack, @Nullable World world, List<String> list, ITooltipFlag tooltipFlag)
 	{
 		if (itemStack.getTagCompound() == null)
 			return;
@@ -123,8 +125,8 @@ public class MixedBlockBlockItem extends ItemBlock
 		item = itemsAllowed.inverse().get(pair.getRight());
 		ItemStack is2 = item != null ? new ItemStack(item) : ItemUtils.getItemStackFromState(pair.getRight());
 
-		list.addAll(is1.getTooltip(player, advancedTooltip));
-		list.addAll(is2.getTooltip(player, advancedTooltip));
+		list.addAll(is1.getTooltip(null, tooltipFlag));
+		list.addAll(is2.getTooltip(null, tooltipFlag));
 	}
 
 	public static Pair<IBlockState, IBlockState> readNBT(NBTTagCompound nbt)

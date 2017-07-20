@@ -52,8 +52,7 @@ public class VanishingDiamondBlock extends VanishingBlock
 {
 	public VanishingDiamondBlock()
 	{
-		super();
-		setName("vanishing_block_diamond");
+		super("vanishing_block_diamond");
 		setDefaultState(getDefaultState().withProperty(TYPE, Type.DIAMOND));
 	}
 
@@ -94,7 +93,7 @@ public class VanishingDiamondBlock extends VanishingBlock
 	}
 
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
+	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list)
 	{}
 
 	@Override

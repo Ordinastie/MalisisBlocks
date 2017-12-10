@@ -95,12 +95,12 @@ public class VanishingOptionsGui extends MalisisGui
 
 			UITextField textField = new UITextField(this, "" + state.delay)	.setSize(27, 0)
 																			.setPosition(55, y)
-																			.setDisabled(!state.shouldPropagate)
+																			.setEnabled(state.shouldPropagate)
 																			.register(this);
 			textField.attachData(Pair.of(dir, DataType.DELAY));
 
 			UICheckBox invCb = new UICheckBox(this)	.setPosition(105, y)
-													.setDisabled(!state.shouldPropagate)
+													.setEnabled(state.shouldPropagate)
 													.setChecked(state.inversed)
 													.register(this);
 			invCb.attachData(Pair.of(dir, DataType.INVERSED));
@@ -167,8 +167,8 @@ public class VanishingOptionsGui extends MalisisGui
 			UITextField tf = configs.get(dir).getMiddle();
 			UICheckBox inv = configs.get(dir).getRight();
 
-			tf.setDisabled(!state.shouldPropagate);
-			inv.setDisabled(!state.shouldPropagate);
+			tf.setEnabled(state.shouldPropagate);
+			inv.setEnabled(state.shouldPropagate);
 
 			if (!cb.isFocused())
 				cb.setChecked(state.shouldPropagate);

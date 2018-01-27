@@ -28,7 +28,7 @@ import io.netty.buffer.ByteBuf;
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.network.SwapperMessage.Packet;
 import net.malisis.core.network.IMalisisMessageHandler;
-import net.malisis.core.network.MalisisMessage;
+import net.malisis.core.registry.AutoLoad;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,7 +44,7 @@ import net.minecraftforge.fml.relauncher.Side;
  * @author Ordinastie
  *
  */
-@MalisisMessage
+@AutoLoad(true)
 public class SwapperMessage implements IMalisisMessageHandler<Packet, IMessage>
 {
 	public SwapperMessage()
@@ -63,8 +63,8 @@ public class SwapperMessage implements IMalisisMessageHandler<Packet, IMessage>
 
 	public static void sendTileEntityTag(TileEntity tileEntity)
 	{
-		MalisisBlocks.network.sendToPlayersWatchingChunk(new Packet(tileEntity),
-				tileEntity.getWorld().getChunkFromBlockCoords(tileEntity.getPos()));
+		MalisisBlocks.network.sendToPlayersWatchingChunk(	new Packet(tileEntity),
+															tileEntity.getWorld().getChunkFromBlockCoords(tileEntity.getPos()));
 	}
 
 	public static class Packet implements IMessage

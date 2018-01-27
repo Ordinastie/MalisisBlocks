@@ -30,7 +30,7 @@ import net.malisis.blocks.MalisisBlocks.Items;
 import net.malisis.blocks.tileentity.VanishingDiamondTileEntity;
 import net.malisis.blocks.vanishingoption.VanishingOptions;
 import net.malisis.core.network.IMalisisMessageHandler;
-import net.malisis.core.network.MalisisMessage;
+import net.malisis.core.registry.AutoLoad;
 import net.malisis.core.util.EntityUtils;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,7 +45,7 @@ import net.minecraftforge.fml.relauncher.Side;
  * @author Ordinastie
  *
  */
-@MalisisMessage
+@AutoLoad(true)
 public class VanishingDiamondFrameMessage implements IMalisisMessageHandler<VanishingDiamondFrameMessage.Packet, IMessage>
 {
 	public static enum DataType

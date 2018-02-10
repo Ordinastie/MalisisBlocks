@@ -41,11 +41,11 @@ import net.malisis.core.client.gui.MalisisGui;
 import net.malisis.core.client.gui.component.container.UIContainer;
 import net.malisis.core.client.gui.component.container.UIInventory;
 import net.malisis.core.client.gui.component.container.UIPlayerInventory;
-import net.malisis.core.client.gui.component.container.UIWindow;
 import net.malisis.core.client.gui.component.decoration.UILabel;
 import net.malisis.core.client.gui.component.interaction.UICheckBox;
 import net.malisis.core.client.gui.component.interaction.UITextField;
 import net.malisis.core.client.gui.event.ComponentEvent;
+import net.malisis.core.client.gui.render.BackgroundTexture.WindowBackground;
 import net.malisis.core.inventory.MalisisInventoryContainer;
 import net.malisis.core.util.TileEntityUtils;
 import net.minecraft.util.EnumFacing;
@@ -78,7 +78,8 @@ public class VanishingOptionsGui extends MalisisGui
 	public void construct()
 	{
 
-		UIWindow window = new UIWindow(this, "gui.vanishingoptions.title", 200, 220);
+		UIContainer<?> window = new UIContainer<>(this, "gui.vanishingoptions.title", 200, 220);
+		window.setBackground(new WindowBackground(this));
 
 		window.add(new UILabel(this, "Direction").setPosition(0, 20));
 		window.add(new UILabel(this, "Delay").setPosition(55, 20));

@@ -1,19 +1,20 @@
 package net.malisis.blocks.gui;
 
+import com.google.common.eventbus.Subscribe;
+
 import net.malisis.blocks.MalisisBlocks;
 import net.malisis.blocks.MalisisBlocksSettings;
 import net.malisis.blocks.tileentity.BlockMixerTileEntity;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.MalisisGui;
 import net.malisis.core.client.gui.component.UISlot;
+import net.malisis.core.client.gui.component.container.UIContainer;
 import net.malisis.core.client.gui.component.container.UIPlayerInventory;
-import net.malisis.core.client.gui.component.container.UIWindow;
 import net.malisis.core.client.gui.component.decoration.UIProgressBar;
 import net.malisis.core.client.gui.component.decoration.UITooltip;
 import net.malisis.core.client.gui.component.interaction.UICheckBox;
+import net.malisis.core.client.gui.render.BackgroundTexture.WindowBackground;
 import net.malisis.core.inventory.MalisisInventoryContainer;
-
-import com.google.common.eventbus.Subscribe;
 
 public class BlockMixerGui extends MalisisGui
 {
@@ -33,7 +34,8 @@ public class BlockMixerGui extends MalisisGui
 	public void construct()
 	{
 
-		UIWindow window = new UIWindow(this, "tile.block_mixer.name", 176, 166);
+		UIContainer<?> window = new UIContainer<>(this, "tile.block_mixer.name", 176, 166);
+		window.setBackground(new WindowBackground(this));
 
 		UISlot firstInputSlot = new UISlot(this, tileEntity.firstInput).setPosition(-60, 20, Anchor.CENTER);
 		UISlot secondInputSlot = new UISlot(this, tileEntity.secondInput).setPosition(60, 20, Anchor.CENTER);
